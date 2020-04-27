@@ -8,9 +8,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 //Models
 import '../models/http_exception.dart';
+import '../models/user.dart';
 
 class Auth with ChangeNotifier {
-  String _userId;
+  User _user;
   String _token;
   DateTime _expiryTime;
   Timer _authTimer;
@@ -19,7 +20,7 @@ class Auth with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool get isAuth {
-    return token != null && _userId != null;
+    return token != null && _user != null;
   }
 
   Stream<FirebaseUser> get onAuthStateChanged {
@@ -35,8 +36,8 @@ class Auth with ChangeNotifier {
     return null;
   }
 
-  String get userId {
-    return _userId;
+  User get user {
+    return _user;
   }
 
   Future<void> googleSignIn() async {
@@ -59,7 +60,12 @@ class Auth with ChangeNotifier {
 
       IdTokenResult tokenResult = await currentUser.getIdToken();
 
-      _userId = currentUser.uid;
+      _user = User(
+        displayName: currentUser.displayName,
+        uid: currentUser.uid,
+        photoUrl: currentUser.photoUrl,
+        email: currentUser.email,
+      );
       _token = tokenResult.token;
       _expiryTime = tokenResult.expirationTime;
 
@@ -68,7 +74,7 @@ class Auth with ChangeNotifier {
 
       final prefs = await SharedPreferences.getInstance();
       final userData = json.encode({
-        'userId': _userId,
+        'userId': user.uid,
         'expiryTime': _expiryTime.toIso8601String(),
         'token': _token,
       });
@@ -89,8 +95,8 @@ class Auth with ChangeNotifier {
       return false;
     }
 
-    final extractedUserData =
-        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    // final extractedUserData =
+    //     json.decode(prefs.getString('userData')) as Map<String, Object>;
     // final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
 
     final idTokenResult = await currentUser.getIdToken();
@@ -99,15 +105,20 @@ class Auth with ChangeNotifier {
 
     if (expiryDate.isBefore(DateTime.now())) {
       // token is invalid
-      print('token expired');
+      // print('token expired');
       return false;
     }
 
     _token = idTokenResult.token;
-    _userId = currentUser.uid;
+     _user = User(
+        displayName: currentUser.displayName,
+        uid: currentUser.uid,
+        photoUrl: currentUser.photoUrl,
+        email: currentUser.email,
+      );
     _expiryTime = expiryDate;
 
-    print('userData: $extractedUserData');
+    // print('userData: $extractedUserData');
     notifyListeners();
     _autoLogout();
 
@@ -117,7 +128,7 @@ class Auth with ChangeNotifier {
   Future<void> logout() async {
     await _auth.signOut();
     await _googleSignIn.signOut();
-    _userId = null;
+    _user = null;
     _expiryTime = null;
     _token = null;
     if (_authTimer != null) {

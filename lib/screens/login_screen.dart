@@ -94,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: 100,
                               ),
                               Text(
-                                '${Provider.of<Auth>(context).userId}',
+                                'COVID RADAR',
                                 style: TextStyle(
                                     fontSize: 24, fontWeight: FontWeight.bold),
                               ),
