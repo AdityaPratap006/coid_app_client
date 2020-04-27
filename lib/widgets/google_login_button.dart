@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+//Providers
 import '../providers/auth.dart' as authProvider;
+
 
 class GoogleLoginButton extends StatefulWidget {
   @override
@@ -74,8 +76,11 @@ class _GoogleLoginButtonState extends State<GoogleLoginButton> {
                   _loading = true;
                 });
                 try {
-                  await Provider.of<authProvider.Auth>(context, listen: false)
-                      .googleSignIn();
+                  await Provider.of<authProvider.Auth>(
+                    context,
+                    listen: false,
+                  ).googleSignIn();
+
                 } catch (e) {
                   var errorMessage = e.toString();
 

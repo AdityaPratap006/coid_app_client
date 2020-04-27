@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+//Models
+import '../models/http_exception.dart';
+
 class Auth with ChangeNotifier {
   FirebaseUser _user;
   String _token;
@@ -33,6 +36,10 @@ class Auth with ChangeNotifier {
   Future<void> googleSignIn() async {
     try {
       GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        throw HttpException(message: 'Sign In Cancelled!');
+      }
+
       GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
       AuthCredential credential = GoogleAuthProvider.getCredential(

@@ -41,28 +41,32 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text('${Provider.of<Auth>(context).user.displayName}'),
-            FlatButton(
-              color: Theme.of(context).accentColor,
-              child: Text('LOGOUT'),
-              onPressed: () async {
+            _loading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : FlatButton(
+                    color: Theme.of(context).accentColor,
+                    child: Text('LOGOUT'),
+                    onPressed: () async {
+                      setState(() {
+                        _loading = true;
+                      });
 
-                setState(() {
-                  _loading = true;
-                });
+                      try {
+                        await Provider.of<Auth>(context, listen: false)
+                            .logout();
+                      } catch (error) {
+                        var errorMessage = error.toString();
 
-                try {
-                  await Provider.of<Auth>(context, listen: false).logout();
-                } catch (error) {
-                  var errorMessage = error.toString();
+                        _showErrorDialog(errorMessage);
+                      }
 
-                  _showErrorDialog(errorMessage);
-                }
-
-                setState(() {
-                  _loading = false;
-                });
-              },
-            ),
+                      setState(() {
+                        _loading = false;
+                      });
+                    },
+                  ),
           ],
         ),
       ),
