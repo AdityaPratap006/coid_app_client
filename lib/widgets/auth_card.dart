@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
+//Providers
+import '../providers/auth.dart';
 
 enum AuthMode {
   SignUp,
@@ -35,9 +40,15 @@ class _AuthCardState extends State<AuthCard> {
   };
 
   bool _isLoading = false;
-  bool _autoValidate = false;
+  // bool _autoValidate = false;
 
   final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    super.dispose();
+    _passwordController.dispose();
+  }
 
   void _switchAuthMode() {
     if (_authMode == AuthMode.Login) {
@@ -53,11 +64,11 @@ class _AuthCardState extends State<AuthCard> {
     }
   }
 
-  void _showErrorDialog(String message) {
+  void _showErrorDialog({String message, String title = 'An Error Occured!'}) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('An Error Occured!'),
+        title: Text(title),
         content: Text(message),
         actions: <Widget>[
           FlatButton(
@@ -74,9 +85,7 @@ class _AuthCardState extends State<AuthCard> {
   Future<void> _submit() async {
     if (!_formKey.currentState.validate()) {
       //Invalid!
-      setState(() {
-        _autoValidate = true;
-      });
+
       return;
     }
 
@@ -89,15 +98,39 @@ class _AuthCardState extends State<AuthCard> {
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
-        await Future.delayed(Duration(seconds: 2));
+        await Provider.of<Auth>(context, listen: false).loginWithEmail(
+          email: _authData['email'],
+          password: _authData['password'],
+        );
       } else {
         // Sign user up
-        await Future.delayed(Duration(seconds: 2));
+        await Provider.of<Auth>(context, listen: false).signUpWithEmail(
+          email: _authData['email'],
+          password: _authData['password'],
+        );
+      }
+    } on PlatformException catch (error) {
+      if (error.code == 'ERROR_WRONG_PASSWORD') {
+        _showErrorDialog(
+          message: 'Wrong password! Please try again.',
+        );
+      } else if (error.code == 'ERROR_USER_NOT_FOUND') {
+        _showErrorDialog(
+          message: 'We couldn\'t find a user with that email.',
+        );
+      } else if (error.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
+        _showErrorDialog(
+          message: 'This email is already in use. Please use a different email.',
+        );
+      } else {
+        _showErrorDialog(
+          message: error.code,
+        );
       }
     } catch (error) {
       const errorMessage =
-          'Couldn\'t authenticate you. Please try again later.';
-      _showErrorDialog(errorMessage);
+          'We couldn\'t authenticate you. Please try again later.';
+      _showErrorDialog(message: errorMessage);
     }
 
     setState(() {
@@ -133,7 +166,6 @@ class _AuthCardState extends State<AuthCard> {
         ),
         child: Form(
           key: _formKey,
-          autovalidate: _autoValidate,
           child: Column(
             children: <Widget>[
               Text(
@@ -162,6 +194,9 @@ class _AuthCardState extends State<AuthCard> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_passwordFocusNode);
                 },
+                onSaved: (value) {
+                  _authData['email'] = value;
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -169,7 +204,7 @@ class _AuthCardState extends State<AuthCard> {
                 ),
                 controller: _passwordController,
                 validator: (value) {
-                  if (value.isEmpty || value.length < 5) {
+                  if (value.isEmpty || value.length < 6) {
                     return 'Password is too short!';
                   }
                   return null;
@@ -184,6 +219,9 @@ class _AuthCardState extends State<AuthCard> {
                     FocusScope.of(context)
                         .requestFocus(_confirmPasswordFocusNode);
                   }
+                },
+                onSaved: (value) {
+                  _authData['password'] = value;
                 },
               ),
               if (_authMode == AuthMode.SignUp)
@@ -223,6 +261,9 @@ class _AuthCardState extends State<AuthCard> {
                       return 'Name is required!';
                     }
                     return null;
+                  },
+                  onSaved: (value) {
+                    _authData['name'] = value;
                   },
                 ),
               SizedBox(

@@ -156,7 +156,11 @@ class Auth with ChangeNotifier {
   Future<void> loginWithEmail({String email, String password}) async {
     try {
       final authResult = await _auth.signInWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
+
+       
 
       FirebaseUser currentUser = authResult.user;
 
@@ -190,7 +194,9 @@ class Auth with ChangeNotifier {
       {String name, String email, String password}) async {
     try {
       final authResult = await _auth.createUserWithEmailAndPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
 
       FirebaseUser currentUser = authResult.user;
 
