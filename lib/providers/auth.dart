@@ -155,12 +155,24 @@ class Auth with ChangeNotifier {
 
   Future<void> loginWithEmail({String email, String password}) async {
     try {
+
+      final List<String> signInMethodsForEmail = await _auth.fetchSignInMethodsForEmail(email: email);
+
+      if (signInMethodsForEmail.isNotEmpty && !signInMethodsForEmail.contains('password')) {
+        
+        if (signInMethodsForEmail.contains('google.com')) {
+          await googleSignIn();
+          return;
+        } else {
+          throw HttpException(message: 'Account already exists via another provider.');
+        }
+        
+      }
+
       final authResult = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-
-       
 
       FirebaseUser currentUser = authResult.user;
 
@@ -200,10 +212,18 @@ class Auth with ChangeNotifier {
 
       FirebaseUser currentUser = authResult.user;
 
+      var userUpdateInfo = UserUpdateInfo();
+      userUpdateInfo.displayName = name;
+      // print('updated name: ${userUpdateInfo.displayName}');
+      await currentUser.updateProfile(userUpdateInfo);
+      await currentUser.reload();
+
       IdTokenResult tokenResult = await currentUser.getIdToken();
 
+      // print('name: ${currentUser.displayName}');
+
       _user = User(
-        displayName: currentUser.displayName,
+        displayName: name,
         uid: currentUser.uid,
         photoUrl: currentUser.photoUrl,
         email: currentUser.email,

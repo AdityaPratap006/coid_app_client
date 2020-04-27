@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 //Providers
 import '../providers/auth.dart';
 
+//Models
+import '../models/http_exception.dart';
+
+
 enum AuthMode {
   SignUp,
   Login,
@@ -105,6 +109,7 @@ class _AuthCardState extends State<AuthCard> {
       } else {
         // Sign user up
         await Provider.of<Auth>(context, listen: false).signUpWithEmail(
+          name: _authData['name'],
           email: _authData['email'],
           password: _authData['password'],
         );
@@ -120,13 +125,16 @@ class _AuthCardState extends State<AuthCard> {
         );
       } else if (error.code == 'ERROR_EMAIL_ALREADY_IN_USE') {
         _showErrorDialog(
-          message: 'This email is already in use. Please use a different email.',
+          message:
+              'This email is already in use. Please use a different email.',
         );
       } else {
         _showErrorDialog(
           message: error.code,
         );
       }
+    } on HttpException catch (error) {
+      _showErrorDialog(message: error.toString());
     } catch (error) {
       const errorMessage =
           'We couldn\'t authenticate you. Please try again later.';
