@@ -110,12 +110,12 @@ class Auth with ChangeNotifier {
     }
 
     _token = idTokenResult.token;
-     _user = User(
-        displayName: currentUser.displayName,
-        uid: currentUser.uid,
-        photoUrl: currentUser.photoUrl,
-        email: currentUser.email,
-      );
+    _user = User(
+      displayName: currentUser.displayName,
+      uid: currentUser.uid,
+      photoUrl: currentUser.photoUrl,
+      email: currentUser.email,
+    );
     _expiryTime = expiryDate;
 
     // print('userData: $extractedUserData');
@@ -151,5 +151,72 @@ class Auth with ChangeNotifier {
     _authTimer = Timer(difference, () {
       logout();
     });
+  }
+
+  Future<void> loginWithEmail({String email, String password}) async {
+    try {
+      final authResult = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
+
+      FirebaseUser currentUser = authResult.user;
+
+      IdTokenResult tokenResult = await currentUser.getIdToken();
+
+      _user = User(
+        displayName: currentUser.displayName,
+        uid: currentUser.uid,
+        photoUrl: currentUser.photoUrl,
+        email: currentUser.email,
+      );
+      _token = tokenResult.token;
+      _expiryTime = tokenResult.expirationTime;
+
+      _autoLogout();
+      notifyListeners();
+
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode({
+        'userId': user.uid,
+        'expiryTime': _expiryTime.toIso8601String(),
+        'token': _token,
+      });
+      prefs.setString('userData', userData);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<void> signUpWithEmail(
+      {String name, String email, String password}) async {
+    try {
+      final authResult = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
+
+      FirebaseUser currentUser = authResult.user;
+
+      IdTokenResult tokenResult = await currentUser.getIdToken();
+
+      _user = User(
+        displayName: currentUser.displayName,
+        uid: currentUser.uid,
+        photoUrl: currentUser.photoUrl,
+        email: currentUser.email,
+      );
+      _token = tokenResult.token;
+      _expiryTime = tokenResult.expirationTime;
+
+      _autoLogout();
+      notifyListeners();
+
+      final prefs = await SharedPreferences.getInstance();
+      final userData = json.encode({
+        'userId': user.uid,
+        'expiryTime': _expiryTime.toIso8601String(),
+        'token': _token,
+      });
+      prefs.setString('userData', userData);
+    } catch (error) {
+      throw error;
+    }
   }
 }
