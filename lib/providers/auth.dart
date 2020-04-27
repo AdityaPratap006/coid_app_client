@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -9,6 +11,7 @@ class Auth with ChangeNotifier {
   FirebaseUser _user;
   String _token;
   DateTime _expiryTime;
+  Timer _authTimer;
 
   bool get isAuth {
     return token != null && _user != null;
@@ -55,6 +58,7 @@ class Auth with ChangeNotifier {
       _token = tokenResult.token;
       _expiryTime = tokenResult.expirationTime;
 
+      _autoLogout();
       notifyListeners();
     } catch (error) {
       throw error;
@@ -67,7 +71,23 @@ class Auth with ChangeNotifier {
     _user = null;
     _expiryTime = null;
     _token = null;
-
+    if (_authTimer != null) {
+       _authTimer.cancel();
+       _authTimer = null;
+    }
     notifyListeners();
+  }
+
+  void _autoLogout() {
+
+    if (_authTimer != null) {
+      _authTimer.cancel();
+    }
+    
+    Duration difference = _expiryTime.difference(DateTime.now());
+     
+    _authTimer = Timer(difference, () {
+      logout();
+    });
   }
 }
