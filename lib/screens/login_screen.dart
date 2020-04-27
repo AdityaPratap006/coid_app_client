@@ -28,12 +28,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _moveUp() {
-    _controller.animateTo(_controller.offset - 100,
+    _controller.animateTo(_controller.offset - 200,
         curve: Curves.linear, duration: Duration(milliseconds: 500));
   }
 
   void _moveDown() {
-    _controller.animateTo(_controller.offset + 100,
+    _controller.animateTo(_controller.offset + 200,
         curve: Curves.linear, duration: Duration(milliseconds: 500));
   }
 
@@ -59,15 +59,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: deviceSize.width * 0.60,
                     ),
                   ),
+                  SizedBox(
+                    height: 100,
+                  ),
                   Expanded(
-                    child: Container(),
+                    child: ClipRRect(
+                       borderRadius: BorderRadius.vertical(top: Radius.elliptical(deviceSize.width, 100)),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
               SingleChildScrollView(
                 controller: _controller,
                 child: Padding(
-                  padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 60.0),
+                  padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 35.0),
                   child: Column(
                     children: <Widget>[
                       Row(
@@ -88,15 +98,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                       SizedBox(
-                        height: deviceSize.height * 0.06,
-                      ),
-                      AuthCard(
-                        moveUp: _moveUp,
-                        moveDown: _moveDown,
-                      ),
-                      SizedBox(
                         height: 20,
                       ),
+                      GoogleLoginButton(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -108,8 +112,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           horizontalLine(width: deviceSize.width * 0.20),
                         ],
                       ),
-                      
-                      GoogleLoginButton(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      AuthCard(
+                        moveUp: _moveUp,
+                        moveDown: _moveDown,
+                      ),
                       SizedBox(
                         height: 40,
                       ),
@@ -122,3 +131,5 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+
+
