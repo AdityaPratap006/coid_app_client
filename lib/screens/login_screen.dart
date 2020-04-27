@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 //widgets
 import '../widgets/auth_card.dart';
 import '../widgets/google_login_button.dart';
+
+//Providers
+import '../providers/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -35,12 +39,13 @@ class _LoginScreenState extends State<LoginScreen> {
   void _moveDown() {
     _controller.animateTo(_controller.offset + 200,
         curve: Curves.linear, duration: Duration(milliseconds: 500));
+
+     
   }
 
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-
     return Scaffold(
       resizeToAvoidBottomPadding: true,
       body: Container(
@@ -89,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 width: 100,
                               ),
                               Text(
-                                'COVID RADAR',
+                                '${Provider.of<Auth>(context).userId}',
                                 style: TextStyle(
                                     fontSize: 24, fontWeight: FontWeight.bold),
                               ),

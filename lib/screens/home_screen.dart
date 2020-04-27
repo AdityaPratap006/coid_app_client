@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = Provider.of<Auth>(context, listen: false).userId;
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
@@ -40,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('${Provider.of<Auth>(context).user.displayName}'),
+            Text('$userId'),
             _loading
                 ? Center(
                     child: CircularProgressIndicator(),
