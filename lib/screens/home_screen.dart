@@ -32,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       extendBodyBehindAppBar: true,
       body: _screens[_selectedScreenIndex],
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 10,
         onTap: _selectScreen,
         backgroundColor: Theme.of(context).primaryColor,
         unselectedItemColor: Colors.white,
