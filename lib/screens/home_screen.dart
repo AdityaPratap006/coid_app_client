@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<Auth>(context, listen: false).user;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),

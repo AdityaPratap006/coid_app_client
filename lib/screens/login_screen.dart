@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 //widgets
 import '../widgets/auth_card.dart';
 import '../widgets/google_login_button.dart';
 
-//Providers
-import '../providers/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

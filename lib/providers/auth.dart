@@ -40,6 +40,19 @@ class Auth with ChangeNotifier {
     return _user;
   }
 
+  Future<void> _storeDataLocallyOnDevice() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userData = json.encode({
+      'uid': _user.uid,
+      'displayName': _user.displayName,
+      'photoUrl': _user.photoUrl,
+      'email': _user.email,
+      'expiryTime': _expiryTime.toIso8601String(),
+      'token': _token,
+    });
+    prefs.setString('userData', userData);
+  }
+
   Future<void> googleSignIn() async {
     try {
       GoogleSignInAccount googleUser = await _googleSignIn.signIn();
@@ -72,13 +85,7 @@ class Auth with ChangeNotifier {
       _autoLogout();
       notifyListeners();
 
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode({
-        'userId': user.uid,
-        'expiryTime': _expiryTime.toIso8601String(),
-        'token': _token,
-      });
-      prefs.setString('userData', userData);
+      await _storeDataLocallyOnDevice();
     } catch (error) {
       throw error;
     }
@@ -87,38 +94,28 @@ class Auth with ChangeNotifier {
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
 
-    final _auth = FirebaseAuth.instance;
-    final currentUser = await _auth.currentUser();
-
-    // print('auto login: ${prefs.getString('userData')}');
     if (!prefs.containsKey('userData')) {
       return false;
     }
 
-    // final extractedUserData =
-    //     json.decode(prefs.getString('userData')) as Map<String, Object>;
-    // final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
+    final extractedUserData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    final expiryTime = DateTime.parse(extractedUserData['expiryTime']);
 
-    final idTokenResult = await currentUser.getIdToken();
-
-    final expiryDate = idTokenResult.expirationTime;
-
-    if (expiryDate.isBefore(DateTime.now())) {
+    if (expiryTime.isBefore(DateTime.now())) {
       // token is invalid
-      // print('token expired');
       return false;
     }
 
-    _token = idTokenResult.token;
+    _token = extractedUserData['token'];
     _user = User(
-      displayName: currentUser.displayName,
-      uid: currentUser.uid,
-      photoUrl: currentUser.photoUrl,
-      email: currentUser.email,
+      displayName: extractedUserData['displayName'],
+      uid: extractedUserData['uid'],
+      photoUrl: extractedUserData['photoUrl'],
+      email: extractedUserData['email'],
     );
-    _expiryTime = expiryDate;
+    _expiryTime = expiryTime;
 
-    // print('userData: $extractedUserData');
     notifyListeners();
     _autoLogout();
 
@@ -138,6 +135,7 @@ class Auth with ChangeNotifier {
     notifyListeners();
 
     final prefs = await SharedPreferences.getInstance();
+
     prefs.remove('userData');
   }
 
@@ -155,18 +153,18 @@ class Auth with ChangeNotifier {
 
   Future<void> loginWithEmail({String email, String password}) async {
     try {
+      final List<String> signInMethodsForEmail =
+          await _auth.fetchSignInMethodsForEmail(email: email);
 
-      final List<String> signInMethodsForEmail = await _auth.fetchSignInMethodsForEmail(email: email);
-
-      if (signInMethodsForEmail.isNotEmpty && !signInMethodsForEmail.contains('password')) {
-        
+      if (signInMethodsForEmail.isNotEmpty &&
+          !signInMethodsForEmail.contains('password')) {
         if (signInMethodsForEmail.contains('google.com')) {
           await googleSignIn();
           return;
         } else {
-          throw HttpException(message: 'Account already exists via another provider.');
+          throw HttpException(
+              message: 'Account already exists via another provider.');
         }
-        
       }
 
       final authResult = await _auth.signInWithEmailAndPassword(
@@ -190,13 +188,7 @@ class Auth with ChangeNotifier {
       _autoLogout();
       notifyListeners();
 
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode({
-        'userId': user.uid,
-        'expiryTime': _expiryTime.toIso8601String(),
-        'token': _token,
-      });
-      prefs.setString('userData', userData);
+      await _storeDataLocallyOnDevice();
     } catch (error) {
       throw error;
     }
@@ -234,13 +226,7 @@ class Auth with ChangeNotifier {
       _autoLogout();
       notifyListeners();
 
-      final prefs = await SharedPreferences.getInstance();
-      final userData = json.encode({
-        'userId': user.uid,
-        'expiryTime': _expiryTime.toIso8601String(),
-        'token': _token,
-      });
-      prefs.setString('userData', userData);
+      await _storeDataLocallyOnDevice();
     } catch (error) {
       throw error;
     }
