@@ -45,9 +45,7 @@ class MyApp extends StatelessWidget {
                                 ),
                               ),
                             )
-                          : authResultSnapshot.data == false
-                              ? LoginScreen()
-                              : HomeScreen(),
+                          : LoginScreen(),
                 ),
         ),
       ),
