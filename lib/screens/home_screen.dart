@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-//Providers
-import '../providers/auth.dart';
+//screens
+import './hotspots_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -10,67 +9,44 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool _loading = false;
+  final List<Widget> _screens = [
+    HotspotsScreen(),
+    HotspotsScreen(),
+  ];
 
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Something Went Wrong:'),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          )
-        ],
-      ),
-    );
+  int _selectedScreenIndex = 0;
+
+  void _selectScreen(int index) {
+    setState(() {
+      _selectedScreenIndex = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<Auth>(context, listen: false).user;
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('${user.displayName}'),
-            _loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : FlatButton(
-                    color: Theme.of(context).accentColor,
-                    child: Text('LOGOUT'),
-                    onPressed: () async {
-                      setState(() {
-                        _loading = true;
-                      });
-
-                      try {
-                        await Provider.of<Auth>(context, listen: false)
-                            .logout();
-                      } catch (error) {
-                        var errorMessage = error.toString();
-
-                        _showErrorDialog(errorMessage);
-                      }
-
-                      setState(() {
-                        _loading = false;
-                      });
-                    },
-                  ),
-          ],
-        ),
+      extendBodyBehindAppBar: true,
+      body: _screens[_selectedScreenIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        onTap: _selectScreen,
+        backgroundColor: Theme.of(context).primaryColor,
+        unselectedItemColor: Colors.white,
+        selectedItemColor: Theme.of(context).accentColor,
+        currentIndex: _selectedScreenIndex,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.location_on),
+            title: Text('Hotspots'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_car),
+            title: Text('Directions'),
+          ),
+        ],
       ),
     );
   }
