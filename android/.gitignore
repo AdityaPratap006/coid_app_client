@@ -5,3 +5,8 @@ gradle-wrapper.jar
 /gradlew.bat
 /local.properties
 GeneratedPluginRegistrant.java
+
+# Files containing secret keys
+/app/google-services.json
+/app/src/main/res/values/api_keys.xml
+
