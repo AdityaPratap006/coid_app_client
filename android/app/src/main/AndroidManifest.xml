@@ -7,10 +7,10 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="covid_app_client"
+        android:label="Covid Radar"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"
-               android:value="AIzaSyA9SDV3cbQxjsbY40_Z3Dj0VPk1nQFddvs"/>
+               android:value="@string/google_maps_api_key"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
