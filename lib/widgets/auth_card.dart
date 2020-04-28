@@ -212,7 +212,10 @@ class _AuthCardState extends State<AuthCard> {
                 ),
                 controller: _passwordController,
                 validator: (value) {
-                  if (value.isEmpty || value.length < 6) {
+                  if (value.isEmpty ) {
+                    return 'Please enter a password!';
+                  }
+                  if (value.length < 6) {
                     return 'Password is too short!';
                   }
                   return null;
