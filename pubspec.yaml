@@ -30,6 +30,8 @@ dependencies:
   shared_preferences: ^0.5.7
   google_maps_flutter: ^0.5.26+4
   geolocator: ^5.3.1
+  google_maps_webservice: ^0.0.16
+  flutter_google_places: ^0.2.4
 
 
 dev_dependencies:

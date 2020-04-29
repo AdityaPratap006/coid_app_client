@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 import '../widgets/profile_button.dart';
 
 class HotspotsSearchBox extends StatefulWidget {
+  final Function searchAndNavigate;
+
+  HotspotsSearchBox({this.searchAndNavigate});
+
   @override
   _HotspotsSearchBoxState createState() => _HotspotsSearchBoxState();
 }
 
 class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
+  String _searchAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +46,27 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
           children: <Widget>[
             Container(
               width: searchBoxWidth * 0.80,
-              height: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  color: Colors.lightBlue,
+               
+              alignment: Alignment.center,
+              child: TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search places...',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () async {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      await widget.searchAndNavigate(_searchAddress);
+                    },
+                    iconSize: 30.0,
+                  ),
                 ),
+                onChanged: (val) {
+                  setState(() {
+                    _searchAddress = val;
+                  });
+                },
               ),
             ),
             Container(

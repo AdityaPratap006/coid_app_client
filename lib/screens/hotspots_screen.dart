@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 //Providers
@@ -13,7 +14,29 @@ class HotspotsScreen extends StatefulWidget {
 
 class _HotspotsScreenState extends State<HotspotsScreen> {
   GoogleMapController _mapController;
-  String _searchAddress;
+
+  Future<void> _searchAndNavigate(String searchAddress) async {
+    if (searchAddress == null || searchAddress.trim() == '') {
+      return;
+    }
+
+    List<Placemark> placemarkList =
+        await Geolocator().placemarkFromAddress(searchAddress);
+
+    print('Country: ${placemarkList[0].country}');
+
+    await _mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            placemarkList[0].position.latitude,
+            placemarkList[0].position.longitude,
+          ),
+          zoom: 14,
+        ),
+      ),
+    );
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     setState(() {
@@ -24,8 +47,8 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
+
     return Scaffold(
-       
       body: Stack(
         children: <Widget>[
           Container(
@@ -39,7 +62,9 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
               onMapCreated: _onMapCreated,
             ),
           ),
-          HotspotsSearchBox(),
+          HotspotsSearchBox(
+            searchAndNavigate: _searchAndNavigate,
+          ),
         ],
       ),
     );
