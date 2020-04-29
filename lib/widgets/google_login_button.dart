@@ -43,7 +43,7 @@ class _GoogleLoginButtonState extends State<GoogleLoginButton> {
               child: CircularProgressIndicator(),
             )
           : RaisedButton(
-              color: Theme.of(context).accentColor,
+              color: Theme.of(context).primaryColor,
               splashColor: Theme.of(context).primaryColor,
               elevation: 15,
               shape: RoundedRectangleBorder(

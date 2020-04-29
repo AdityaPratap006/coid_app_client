@@ -4,6 +4,10 @@ import 'package:provider/provider.dart';
 //Providers
 import '../providers/auth.dart';
 
+//Screens
+import '../screens/user_profile_screen.dart';
+
+
 class ProfileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,13 @@ class ProfileButton extends StatelessWidget {
         height: 40.0,
         child: InkWell(
           splashColor: Colors.black26,
-          onTap: () {},
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => UserProfileScreen(),
+              ),
+            );
+          },
         ),
       ),
     );

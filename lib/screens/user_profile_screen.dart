@@ -10,7 +10,6 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
-
   bool _loading = false;
 
   void _showErrorDialog(String message) {
@@ -33,21 +32,26 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-     final user = Provider.of<Auth>(context, listen: false).user;
+    final user = Provider.of<Auth>(context, listen: false).user;
 
-    return  Center(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Profile'),
+      ),
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('${user.displayName}'),
+            Text('${user != null ? user.displayName : ''}'),
             _loading
                 ? Center(
                     child: CircularProgressIndicator(),
                   )
                 : FlatButton(
-                    color: Theme.of(context).accentColor,
+                    color: Theme.of(context).primaryColor,
                     child: Text('LOGOUT'),
                     onPressed: () async {
+                      Navigator.of(context).pop();
                       setState(() {
                         _loading = true;
                       });
@@ -68,6 +72,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
           ],
         ),
-      );
+      ),
+    );
   }
 }
