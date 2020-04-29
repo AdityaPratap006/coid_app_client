@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 //screens
 import './hotspots_screen.dart';
+import './directions_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     HotspotsScreen(),
-    HotspotsScreen(),
+    DirectionsScreen(),
   ];
 
   int _selectedScreenIndex = 0;
@@ -25,14 +26,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      extendBodyBehindAppBar: true,
+       
       body: _screens[_selectedScreenIndex],
       bottomNavigationBar: BottomNavigationBar(
-        elevation: 10,
+        elevation: 12,
         onTap: _selectScreen,
         backgroundColor: Theme.of(context).primaryColor,
         unselectedItemColor: Colors.white,

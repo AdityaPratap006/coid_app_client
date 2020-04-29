@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 //Providers
-import '../providers/auth.dart';
 
 class HotspotsScreen extends StatefulWidget {
   @override
@@ -10,64 +8,49 @@ class HotspotsScreen extends StatefulWidget {
 }
 
 class _HotspotsScreenState extends State<HotspotsScreen> {
+  GoogleMapController _mapController;
+  String _searchAddress;
 
-  bool _loading = false;
-
-  void _showErrorDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('Something Went Wrong:'),
-        content: Text(message),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('OK'),
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-          )
-        ],
-      ),
-    );
+  void _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      _mapController = controller;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-     final user = Provider.of<Auth>(context, listen: false).user;
-
-    return  Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('${user.displayName}'),
-            _loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : FlatButton(
-                    color: Theme.of(context).accentColor,
-                    child: Text('LOGOUT'),
-                    onPressed: () async {
-                      setState(() {
-                        _loading = true;
-                      });
-
-                      try {
-                        await Provider.of<Auth>(context, listen: false)
-                            .logout();
-                      } catch (error) {
-                        var errorMessage = error.toString();
-
-                        _showErrorDialog(errorMessage);
-                      }
-
-                      setState(() {
-                        _loading = false;
-                      });
-                    },
-                  ),
-          ],
-        ),
-      );
+    final deviceSize = MediaQuery.of(context).size;
+    return Scaffold(
+       
+      body: Stack(
+        children: <Widget>[
+          Container(
+            height: deviceSize.height,
+            width: deviceSize.width,
+            child: GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: LatLng(23, 79),
+                zoom: 5,
+              ),
+              onMapCreated: _onMapCreated,
+            ),
+          ),
+          Positioned(
+            top: 50,
+            right: 15,
+            left: 15,
+            child: Container(
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(9),
+                color: Colors.white,
+              ),
+              
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
