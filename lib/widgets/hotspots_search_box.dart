@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
+//Widgets
+import '../widgets/profile_button.dart';
+
 class HotspotsSearchBox extends StatefulWidget {
   @override
   _HotspotsSearchBoxState createState() => _HotspotsSearchBoxState();
 }
 
 class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
+
   @override
   Widget build(BuildContext context) {
     final searchBoxWidth = (MediaQuery.of(context).size.width - 30);
@@ -38,7 +42,6 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
             Container(
               width: searchBoxWidth * 0.80,
               height: double.infinity,
-              
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
@@ -50,7 +53,7 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
               width: searchBoxWidth * 0.20,
               height: double.infinity,
               alignment: Alignment.center,
-              child: CircleAvatar(),
+              child: ProfileButton(),
             ),
           ],
         ),
