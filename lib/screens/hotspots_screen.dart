@@ -16,7 +16,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
   GoogleMapController _mapController;
 
   Future<void> _searchAndNavigate(String searchAddress) async {
-    if (searchAddress == null || searchAddress.trim() == '') {
+    if (searchAddress == null || (searchAddress != null && searchAddress.trim() == '')) {
       return;
     }
 
@@ -55,6 +55,8 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
             height: deviceSize.height,
             width: deviceSize.width,
             child: GoogleMap(
+              myLocationButtonEnabled: true,
+              myLocationEnabled: true,
               initialCameraPosition: CameraPosition(
                 target: LatLng(23, 79),
                 zoom: 5,
@@ -65,6 +67,22 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
           HotspotsSearchBox(
             searchAndNavigate: _searchAndNavigate,
           ),
+          // Positioned(
+          //  top: 100,
+          //   left: 20,
+          //   right: 20,
+          //   child: Padding(
+          //     padding: EdgeInsets.only(top: 15),
+          //     child: Text(
+          //       '*You can only search for places within India.',
+          //       style: TextStyle(
+          //         color: Theme.of(context).accentColor,
+          //         fontSize: 10,
+          //         fontWeight: FontWeight.bold,
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

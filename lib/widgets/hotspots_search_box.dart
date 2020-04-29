@@ -43,13 +43,7 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
 
   Future<void> _submitAddress() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    if (_searchAddress.trim() == '') {
-      setState(() {
-        _searchAddress = null;
-      });
-      return;
-    }
-
+    
     await widget.searchAndNavigate(_searchAddress);
   }
 
@@ -83,33 +77,52 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-              width: searchBoxWidth * 0.80,
+              width: searchBoxWidth * 0.70,
               alignment: Alignment.center,
               child: TextField(
                 onTap: () async {
                   Prediction prediction = await PlacesAutocomplete.show(
-                    context: context,
-                    apiKey: MY_GOOGLE_MAPS_API_KEY,
-                    language: 'en',
-                    components: [
-                      Component(Component.country, 'IN'),
-                    ]
-                  );
+                      context: context,
+                      apiKey: MY_GOOGLE_MAPS_API_KEY,
+                      language: 'en',
+                      components: [
+                        Component(Component.country, 'IN'),
+                      ]);
+
+                  if (prediction != null) {
+                    final places =
+                        GoogleMapsPlaces(apiKey: MY_GOOGLE_MAPS_API_KEY);
+                    PlacesDetailsResponse details =
+                        await places.getDetailsByPlaceId(prediction.placeId);
+
+                    setState(() {
+                      _textController.text = details.result.formattedAddress;
+                      _searchAddress = details.result.formattedAddress;
+                      _submitAddress();
+                    });
+
+                    
+                  }
                 },
                 decoration: InputDecoration(
                   hintText: 'Search places...',
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.only(left: 15.0, top: 15.0),
-                  suffixIcon: IconButton(
-                    icon: Icon(Icons.search),
-                    onPressed: _submitAddress,
-                    iconSize: 30.0,
-                  ),
+                  contentPadding: EdgeInsets.only(left: 15.0, top: 5.0),
                 ),
                 controller: _textController,
                 onSubmitted: (val) async {
                   await _submitAddress();
                 },
+              ),
+            ),
+            Container(
+              width: searchBoxWidth * 0.10,
+              height: double.infinity,
+              alignment: Alignment.center,
+              child: IconButton(
+                icon: Icon(Icons.search),
+                onPressed: _submitAddress,
+                iconSize: 30.0,
               ),
             ),
             Container(
