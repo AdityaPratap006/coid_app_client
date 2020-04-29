@@ -26,14 +26,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       
       body: _screens[_selectedScreenIndex],
       bottomNavigationBar: BottomNavigationBar(
         elevation: 12,
         onTap: _selectScreen,
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).accentColor,
         unselectedItemColor: Colors.white,
-        selectedItemColor: Theme.of(context).accentColor,
+        selectedItemColor: Theme.of(context).primaryColor,
         currentIndex: _selectedScreenIndex,
         items: [
           BottomNavigationBarItem(

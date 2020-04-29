@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+
 //Providers
+
+//Widgets
+import '../widgets/hotspots_search_box.dart';
 
 class HotspotsScreen extends StatefulWidget {
   @override
@@ -35,20 +39,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
               onMapCreated: _onMapCreated,
             ),
           ),
-          Positioned(
-            top: 50,
-            right: 15,
-            left: 15,
-            child: Container(
-              height: 50,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(9),
-                color: Colors.white,
-              ),
-              
-            ),
-          ),
+          HotspotsSearchBox(),
         ],
       ),
     );
