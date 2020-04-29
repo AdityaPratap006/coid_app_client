@@ -43,8 +43,30 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
 
   Future<void> _submitAddress() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    
+
     await widget.searchAndNavigate(_searchAddress);
+  }
+
+  Future<void> _showPlacesSuggestions() async {
+    Prediction prediction = await PlacesAutocomplete.show(
+        context: context,
+        apiKey: MY_GOOGLE_MAPS_API_KEY,
+        language: 'en',
+        components: [
+          Component(Component.country, 'IN'),
+        ]);
+
+    if (prediction != null) {
+      final places = GoogleMapsPlaces(apiKey: MY_GOOGLE_MAPS_API_KEY);
+      PlacesDetailsResponse details =
+          await places.getDetailsByPlaceId(prediction.placeId);
+
+      setState(() {
+        _textController.text = details.result.formattedAddress;
+        _searchAddress = details.result.formattedAddress;
+        _submitAddress();
+      });
+    }
   }
 
   @override
@@ -80,30 +102,7 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
               width: searchBoxWidth * 0.70,
               alignment: Alignment.center,
               child: TextField(
-                onTap: () async {
-                  Prediction prediction = await PlacesAutocomplete.show(
-                      context: context,
-                      apiKey: MY_GOOGLE_MAPS_API_KEY,
-                      language: 'en',
-                      components: [
-                        Component(Component.country, 'IN'),
-                      ]);
-
-                  if (prediction != null) {
-                    final places =
-                        GoogleMapsPlaces(apiKey: MY_GOOGLE_MAPS_API_KEY);
-                    PlacesDetailsResponse details =
-                        await places.getDetailsByPlaceId(prediction.placeId);
-
-                    setState(() {
-                      _textController.text = details.result.formattedAddress;
-                      _searchAddress = details.result.formattedAddress;
-                      _submitAddress();
-                    });
-
-                    
-                  }
-                },
+                onTap: _showPlacesSuggestions,
                 decoration: InputDecoration(
                   hintText: 'Search places...',
                   border: InputBorder.none,
