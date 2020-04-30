@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 //screens
 import './hotspots_screen.dart';
@@ -10,18 +11,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+   
+
   final List<Widget> _screens = [
     HotspotsScreen(),
     DirectionsScreen(),
   ];
 
   int _selectedScreenIndex = 0;
+  
 
   void _selectScreen(int index) {
     setState(() {
       _selectedScreenIndex = index;
     });
   }
+
 
   @override
   Widget build(BuildContext context) {

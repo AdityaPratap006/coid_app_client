@@ -32,6 +32,7 @@ dependencies:
   geolocator: ^5.3.1
   google_maps_webservice: ^0.0.16
   flutter_google_places: ^0.2.4
+  location_permissions: ^2.0.5
 
 
 dev_dependencies:
@@ -55,6 +56,8 @@ flutter:
    - lib/assets/images/doctor_fights.jpg
    - lib/assets/images/logo.png
    - lib/assets/images/google_logo.png
+   - lib/assets/images/hotspot_location.png
+   - lib/assets/images/user_location.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
