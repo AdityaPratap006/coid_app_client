@@ -10,6 +10,9 @@ import '../providers/hotspot_locations.dart';
 //Widgets
 import '../widgets/hotspots_search_box.dart';
 
+//Models
+import '../models/location.dart';
+
 class HotspotsScreen extends StatefulWidget {
   @override
   _HotspotsScreenState createState() => _HotspotsScreenState();
@@ -19,6 +22,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
   GoogleMapController _mapController;
   bool _currentLocationLoading = false;
   Set<Marker> _markers = Set();
+  bool _hotspotLocationsLoading = false;
 
   Future<void> _searchAndNavigate(String searchAddress) async {
     if (searchAddress == null ||
@@ -36,7 +40,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
             placemarkList[0].position.latitude,
             placemarkList[0].position.longitude,
           ),
-          zoom: 18,
+          zoom: 10,
         ),
       ),
     );
@@ -132,28 +136,70 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
     });
   }
 
+  Future<void> _setHotspotMarkers(List<LocationData> locations) async {
+    final deviceSize = MediaQuery.of(context).size;
+    BitmapDescriptor hotspotIcon = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(),
+      'lib/assets/images/hotspot_location.png',
+    );
+    locations.forEach((loc) {
+      _markers.add(
+        Marker(
+          markerId: MarkerId(loc.location + loc.caseCount.toString()),
+          icon: hotspotIcon,
+          position: LatLng(loc.coordinates.latitude, loc.coordinates.longitude),
+        ),
+      );
+    });
+
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      _hotspotLocationsLoading = true;
+    });
+
+    Provider.of<HotspotLocations>(context, listen: false)
+        .fetchAndSetLocations()
+        .then((_) {
+      setState(() {
+        _hotspotLocationsLoading = false;
+      });
+      _setHotspotMarkers(
+          Provider.of<HotspotLocations>(context, listen: false).locations);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    Provider.of<HotspotLocations>(context).getAllLocations();
+
+    print(
+        Provider.of<HotspotLocations>(context, listen: false).locations.length);
+
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
             height: deviceSize.height,
             width: deviceSize.width,
-            child: Consumer<HotspotLocations>(
-              builder: (ctx, hotspotLocations, _) => GoogleMap(
-                buildingsEnabled: true,
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(23, 79),
-                  zoom: 5,
-                ),
-                onMapCreated: _onMapCreated,
-                markers: _markers,
-                compassEnabled: true,
-              ),
-            ),
+            child: _hotspotLocationsLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : GoogleMap(
+                    buildingsEnabled: true,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(23, 79),
+                      zoom: 5,
+                    ),
+                    onMapCreated: _onMapCreated,
+                    markers: _markers,
+                    compassEnabled: true,
+                  ),
           ),
           HotspotsSearchBox(
             searchAndNavigate: _searchAndNavigate,
