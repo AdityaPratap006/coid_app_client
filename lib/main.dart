@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 //Providers
 import './providers/auth.dart';
+import './providers/hotspot_locations.dart';
 
 //Screens
 import './screens/home_screen.dart';
@@ -18,6 +19,9 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider.value(
           value: Auth(),
+        ),
+        ChangeNotifierProvider.value(
+          value: HotspotLocations(),
         ),
       ],
       child: Consumer<Auth>(

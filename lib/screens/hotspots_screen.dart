@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location_permissions/location_permissions.dart';
+import 'package:provider/provider.dart';
 
 //Providers
+import '../providers/hotspot_locations.dart';
 
 //Widgets
 import '../widgets/hotspots_search_box.dart';
@@ -113,7 +115,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
                 pos.latitude,
                 pos.longitude,
               ),
-              zoom: 16,
+              zoom: 16.0,
             ),
           ),
         );
@@ -133,21 +135,24 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-
+    Provider.of<HotspotLocations>(context).getAllLocations();
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
             height: deviceSize.height,
             width: deviceSize.width,
-            child: GoogleMap(
-              buildingsEnabled: true,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(23, 79),
-                zoom: 5,
+            child: Consumer<HotspotLocations>(
+              builder: (ctx, hotspotLocations, _) => GoogleMap(
+                buildingsEnabled: true,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(23, 79),
+                  zoom: 5,
+                ),
+                onMapCreated: _onMapCreated,
+                markers: _markers,
+                compassEnabled: true,
               ),
-              onMapCreated: _onMapCreated,
-              markers: _markers,
             ),
           ),
           HotspotsSearchBox(

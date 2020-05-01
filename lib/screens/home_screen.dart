@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 
-//screens
+//Screens
 import './hotspots_screen.dart';
 import './directions_screen.dart';
 
