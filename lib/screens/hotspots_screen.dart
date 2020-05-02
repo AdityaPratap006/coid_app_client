@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -21,8 +23,12 @@ class HotspotsScreen extends StatefulWidget {
 class _HotspotsScreenState extends State<HotspotsScreen> {
   GoogleMapController _mapController;
   bool _currentLocationLoading = false;
+  LatLng _currentLocation;
   Set<Marker> _markers = Set();
   bool _hotspotLocationsLoading = false;
+  double _cameraBearing = 0.0;
+  LatLng _cameraTarget = LatLng(23, 79);
+  double _cameraZoom = 14;
 
   Future<void> _searchAndNavigate(String searchAddress) async {
     if (searchAddress == null ||
@@ -93,32 +99,35 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
       );
     } else {
       try {
-        Position pos = await geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best,
-        );
-
-        BitmapDescriptor myMarkerIcon = await BitmapDescriptor.fromAssetImage(
-          ImageConfiguration(),
-          'lib/assets/images/user_location.png',
-        );
-
-        setState(() {
-          _markers.add(
-            Marker(
-              markerId: MarkerId('my_location'),
-              icon: myMarkerIcon,
-              position: LatLng(pos.latitude, pos.longitude),
-            ),
+        if (_currentLocation == null) {
+          Position pos = await geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.best,
           );
-        });
+
+          BitmapDescriptor myMarkerIcon = await BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(),
+            'lib/assets/images/user_location.png',
+          );
+
+          setState(() {
+            _currentLocation = LatLng(pos.latitude, pos.longitude);
+            _markers.add(
+              Marker(
+                markerId: MarkerId('my_location'),
+                icon: myMarkerIcon,
+                position: LatLng(pos.latitude, pos.longitude),
+                infoWindow: InfoWindow(
+                  title: 'My Location',
+                ),
+              ),
+            );
+          });
+        }
 
         await _mapController.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
-              target: LatLng(
-                pos.latitude,
-                pos.longitude,
-              ),
+              target: _currentLocation,
               zoom: 16.0,
             ),
           ),
@@ -148,6 +157,12 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
           markerId: MarkerId(loc.location + loc.caseCount.toString()),
           icon: hotspotIcon,
           position: LatLng(loc.coordinates.latitude, loc.coordinates.longitude),
+          infoWindow: InfoWindow(
+            title: loc.location.trimLeft()[0] == ','
+                ? loc.location.trimLeft().substring(1)
+                : loc.location.trimLeft(),
+            snippet: 'There are multiple covid cases within 6 KM radius.',
+          ),
         ),
       );
     });
@@ -167,10 +182,6 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-
-    print(
-        Provider.of<HotspotLocations>(context, listen: false).locations.length);
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -190,34 +201,60 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
                     ),
                     onMapCreated: _onMapCreated,
                     markers: _markers,
-                    compassEnabled: true,
+                    compassEnabled: false,
+                    onCameraMove: (CameraPosition pos) {
+                      setState(() {
+                        _cameraBearing = pos.bearing;
+                        _cameraTarget = pos.target;
+                        _cameraZoom = pos.zoom;
+                      });
+                    },
                   ),
           ),
           HotspotsSearchBox(
             searchAndNavigate: _searchAndNavigate,
           ),
           Positioned(
-            bottom: 10.0,
-            left: deviceSize.width * 0.30,
-            right: deviceSize.width * 0.30,
-            child: _currentLocationLoading
-                ? Container(
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator(),
-                  )
-                : RaisedButton(
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(18.0),
-                    ),
-                    onPressed: _getCurrentLocation,
-                    color: Theme.of(context).primaryColor,
-                    textColor: Theme.of(context).accentColor,
-                    splashColor: Theme.of(context).accentColor,
-                    child: Text(
-                      'Locate me'.toUpperCase(),
-                      style: TextStyle(fontSize: 14),
+            top: 120.0,
+            right: 8.0,
+            child: FloatingActionButton(
+              onPressed: () {
+                if (_currentLocationLoading) {
+                  return;
+                }
+
+                _getCurrentLocation();
+              },
+              backgroundColor: Theme.of(context).primaryColor,
+              splashColor: Theme.of(context).accentColor,
+              child: Icon(Icons.location_searching),
+            ),
+          ),
+          Positioned(
+            top: 200.0,
+            right: 8.0,
+            child: FloatingActionButton(
+              child: Transform.rotate(
+                angle: -(pi / 180) * _cameraBearing,
+                child: Icon(Icons.navigation),
+              ),
+              backgroundColor: Theme.of(context).primaryColor,
+              splashColor: Theme.of(context).accentColor,
+              onPressed: () async {
+                setState(() {
+                  _cameraBearing = 0.0;
+                });
+                await _mapController.animateCamera(
+                  CameraUpdate.newCameraPosition(
+                    CameraPosition(
+                      target: _cameraTarget,
+                      bearing: 0.0,
+                      zoom: _cameraZoom,
                     ),
                   ),
+                );
+              },
+            ),
           ),
         ],
       ),

@@ -6,6 +6,8 @@ import '../providers/hotspot_locations.dart';
 //Screens
 import './hotspots_screen.dart';
 import './directions_screen.dart';
+import './user_profile_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,6 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     HotspotsScreen(),
     DirectionsScreen(),
+    UserProfileScreen(),
+    UserProfileScreen(),
   ];
 
   int _selectedScreenIndex = 0;
@@ -84,12 +88,44 @@ class _HomeScreenState extends State<HomeScreen> {
               currentIndex: _selectedScreenIndex,
               items: [
                 BottomNavigationBarItem(
+                  backgroundColor: Theme.of(context).primaryColor,
                   icon: Icon(Icons.location_on),
-                  title: Text('Covid Radar'),
+                  title: Text(
+                    'Covid Radar',
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
                 BottomNavigationBarItem(
+                  backgroundColor: Theme.of(context).primaryColor,
                   icon: Icon(Icons.directions_car),
-                  title: Text('Directions'),
+                  title: Text(
+                    'Routes',
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  icon: Icon(Icons.show_chart),
+                  title: Text(
+                    'Insights',
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                BottomNavigationBarItem(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  icon: Icon(Icons.person),
+                  title: Text(
+                    'Profile',
+                    style: TextStyle(
+                      fontSize: 14,
+                    ),
+                  ),
                 ),
               ],
             ),
