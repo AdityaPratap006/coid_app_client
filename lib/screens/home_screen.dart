@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     UserProfileScreen(),
   ];
 
-  int _selectedScreenIndex = 0;
+  int _selectedScreenIndex = 1;
   bool _loadingCovidLocations = false;
 
   void _selectScreen(int index) {

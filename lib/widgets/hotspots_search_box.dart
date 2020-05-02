@@ -8,6 +8,9 @@ import '../widgets/profile_button.dart';
 //Config
 import '../config/api_keys.dart';
 
+//Utils
+import '../utils/search_box_decoration.dart';
+
 class HotspotsSearchBox extends StatefulWidget {
   final Function(String) searchAndNavigate;
 
@@ -86,22 +89,7 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
       child: Container(
         height: 50,
         width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(9),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              offset: Offset(0.0, 10.0),
-              blurRadius: 10.0,
-            ),
-            BoxShadow(
-              color: Colors.black12,
-              offset: Offset(0.0, -5.0),
-              blurRadius: 5.0,
-            ),
-          ],
-        ),
+        decoration: SearchBoxDecoration.decoration,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[

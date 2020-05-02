@@ -178,6 +178,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
       Provider.of<HotspotLocations>(context, listen: false).locations,
     );
   }
+  
 
   @override
   Widget build(BuildContext context) {
