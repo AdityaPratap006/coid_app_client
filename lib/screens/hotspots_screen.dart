@@ -40,7 +40,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
             placemarkList[0].position.latitude,
             placemarkList[0].position.longitude,
           ),
-          zoom: 10,
+          zoom: 16,
         ),
       ),
     );
@@ -137,7 +137,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
   }
 
   Future<void> _setHotspotMarkers(List<LocationData> locations) async {
-    final deviceSize = MediaQuery.of(context).size;
+    // final deviceSize = MediaQuery.of(context).size;
     BitmapDescriptor hotspotIcon = await BitmapDescriptor.fromAssetImage(
       ImageConfiguration(),
       'lib/assets/images/hotspot_location.png',
@@ -158,19 +158,10 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _hotspotLocationsLoading = true;
-    });
 
-    Provider.of<HotspotLocations>(context, listen: false)
-        .fetchAndSetLocations()
-        .then((_) {
-      setState(() {
-        _hotspotLocationsLoading = false;
-      });
-      _setHotspotMarkers(
-          Provider.of<HotspotLocations>(context, listen: false).locations);
-    });
+    _setHotspotMarkers(
+      Provider.of<HotspotLocations>(context, listen: false).locations,
+    );
   }
 
   @override
@@ -191,6 +182,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
                     child: CircularProgressIndicator(),
                   )
                 : GoogleMap(
+                    mapType: MapType.normal,
                     buildingsEnabled: true,
                     initialCameraPosition: CameraPosition(
                       target: LatLng(23, 79),
@@ -219,7 +211,7 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
                     ),
                     onPressed: _getCurrentLocation,
                     color: Theme.of(context).primaryColor,
-                    textColor: Colors.white,
+                    textColor: Theme.of(context).accentColor,
                     splashColor: Theme.of(context).accentColor,
                     child: Text(
                       'Locate me'.toUpperCase(),

@@ -49,12 +49,14 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
 
   Future<void> _showPlacesSuggestions() async {
     Prediction prediction = await PlacesAutocomplete.show(
-        context: context,
-        apiKey: MY_GOOGLE_MAPS_API_KEY,
-        language: 'en',
-        components: [
-          Component(Component.country, 'IN'),
-        ]);
+      context: context,
+      apiKey: MY_GOOGLE_MAPS_API_KEY,
+      language: 'en',
+      mode: Mode.overlay,
+      components: [
+        Component(Component.country, 'IN'),
+      ],
+    );
 
     if (prediction != null) {
       final places = GoogleMapsPlaces(apiKey: MY_GOOGLE_MAPS_API_KEY);
@@ -65,6 +67,11 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
         _textController.text = details.result.formattedAddress;
         _searchAddress = details.result.formattedAddress;
         _submitAddress();
+      });
+    } else {
+      setState(() {
+        _searchAddress = null;
+        _textController.text = null;
       });
     }
   }
