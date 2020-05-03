@@ -97,6 +97,9 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
               width: searchBoxWidth * 0.70,
               alignment: Alignment.center,
               child: TextField(
+                onChanged: (val) {
+                  _showPlacesSuggestions();
+                },
                 onTap: _showPlacesSuggestions,
                 decoration: InputDecoration(
                   hintText: 'Search places...',

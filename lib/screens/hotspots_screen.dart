@@ -36,20 +36,27 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
       return;
     }
 
-    List<Placemark> placemarkList =
-        await Geolocator().placemarkFromAddress(searchAddress);
+    try {
+      List<Placemark> placemarkList =
+          await Geolocator().placemarkFromAddress(searchAddress);
 
-    await _mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(
-            placemarkList[0].position.latitude,
-            placemarkList[0].position.longitude,
+      await _mapController.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(
+              placemarkList[0].position.latitude,
+              placemarkList[0].position.longitude,
+            ),
+            zoom: 16,
           ),
-          zoom: 16,
         ),
-      ),
-    );
+      );
+    } catch (error) {
+      _showCustomDialog(
+        title: 'An Error occured',
+        content: 'We couldn\'t find that place! Please try something else.',
+      );
+    }
   }
 
   void _onMapCreated(GoogleMapController controller) {
@@ -178,7 +185,6 @@ class _HotspotsScreenState extends State<HotspotsScreen> {
       Provider.of<HotspotLocations>(context, listen: false).locations,
     );
   }
-  
 
   @override
   Widget build(BuildContext context) {

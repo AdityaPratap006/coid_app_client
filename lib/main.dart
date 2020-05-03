@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 //Providers
 import './providers/auth.dart';
 import './providers/hotspot_locations.dart';
+import './providers/directions.dart';
 
 //Screens
 import './screens/home_screen.dart';
@@ -23,6 +24,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: HotspotLocations(),
         ),
+        ChangeNotifierProvider.value(
+          value: DirectionsProvider(),
+        )
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
