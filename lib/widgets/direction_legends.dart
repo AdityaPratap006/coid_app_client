@@ -7,7 +7,7 @@ class DirectionLegends extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: SearchBoxDecoration.decoration(color: Colors.white54),
+      decoration: SearchBoxDecoration.decoration(color: Colors.white70),
       width: 150,
       height: 80,
       child: Padding(

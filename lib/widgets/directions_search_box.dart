@@ -14,9 +14,10 @@ enum SearchType {
 }
 
 class DirectionsSearchBox extends StatefulWidget {
-  final Future<void> Function({String source, String destination}) drawRoutes;
+  final void Function({String source, String destination}) drawRoutes;
+  final bool loading;
 
-  DirectionsSearchBox({this.drawRoutes});
+  DirectionsSearchBox({this.drawRoutes, this.loading});
   @override
   _DirectionsSearchBoxState createState() => _DirectionsSearchBoxState();
 }
@@ -119,101 +120,107 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
       top: 50,
       left: 15,
       right: 15,
-      child: Container(
-        width: double.infinity,
-        height: 120,
-        decoration: SearchBoxDecoration.decoration(),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: searchBoxWidth * 0.80,
+      child: widget.loading
+          ? Container(
               alignment: Alignment.center,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: CircularProgressIndicator(),
+            )
+          : Container(
+              width: double.infinity,
+              height: 120,
+              decoration: SearchBoxDecoration.decoration(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Container(
-                    width: double.infinity,
-                    child: TextField(
-                      // onChanged: (val) {
-                      //   _showPlacesSuggestions(SearchType.SOURCE);
-                      // },
-                      onTap: () {
-                        _showPlacesSuggestions(SearchType.SOURCE);
-                      },
+                    width: searchBoxWidth * 0.80,
+                    alignment: Alignment.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          width: double.infinity,
+                          child: TextField(
+                            // onChanged: (val) {
+                            //   _showPlacesSuggestions(SearchType.SOURCE);
+                            // },
+                            onTap: () {
+                              _showPlacesSuggestions(SearchType.SOURCE);
+                            },
 
-                      decoration: InputDecoration(
-                        hintText: 'Source...',
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(
-                          left: 15.0,
+                            decoration: InputDecoration(
+                              hintText: 'Source...',
+                              border: InputBorder.none,
+                              contentPadding: EdgeInsets.only(
+                                left: 15.0,
+                              ),
+                            ),
+                            focusNode: _srcFocusNode,
+                            controller: _srcTextController,
+                            textInputAction: _destination == ''
+                                ? TextInputAction.next
+                                : TextInputAction.go,
+                            onSubmitted: (val) {
+                              // if (_destination == '') {
+                              //   _destFocusNode.requestFocus();
+                              //   return;
+                              // }
+                            },
+                          ),
                         ),
-                      ),
-                      focusNode: _srcFocusNode,
-                      controller: _srcTextController,
-                      textInputAction: _destination == ''
-                          ? TextInputAction.next
-                          : TextInputAction.go,
-                      onSubmitted: (val) {
-                        // if (_destination == '') {
-                        //   _destFocusNode.requestFocus();
-                        //   return;
-                        // }
-                      },
+                        Container(
+                          width: double.infinity,
+                          child: TextField(
+                            // onChanged: (val) {
+                            //   _showPlacesSuggestions(SearchType.DESTINATION);
+                            // },
+                            onTap: () {
+                              _showPlacesSuggestions(SearchType.DESTINATION);
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Destination...',
+                              border: InputBorder.none,
+                              contentPadding:
+                                  EdgeInsets.only(left: 15.0, top: 5.0),
+                            ),
+                            focusNode: _destFocusNode,
+                            textInputAction: _source == ''
+                                ? TextInputAction.next
+                                : TextInputAction.go,
+                            controller: _destTextController,
+                            onSubmitted: (val) {
+                              // if (_source == '') {
+                              //   _srcFocusNode.requestFocus();
+                              //   return;
+                              // }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Container(
-                    width: double.infinity,
-                    child: TextField(
-                      // onChanged: (val) {
-                      //   _showPlacesSuggestions(SearchType.DESTINATION);
-                      // },
-                      onTap: () {
-                        _showPlacesSuggestions(SearchType.DESTINATION);
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Destination...',
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.only(left: 15.0, top: 5.0),
+                    width: searchBoxWidth * 0.20,
+                    height: double.infinity,
+                    alignment: Alignment.center,
+                    child: Visibility(
+                      visible: _source != '' && _destination != '',
+                      child: FloatingActionButton(
+                        child: Icon(
+                          Icons.directions,
+                          size: 30,
+                        ),
+                        onPressed: () async {
+                          widget.drawRoutes(
+                              source: _source, destination: _destination);
+                        },
                       ),
-                      focusNode: _destFocusNode,
-                      textInputAction: _source == ''
-                          ? TextInputAction.next
-                          : TextInputAction.go,
-                      controller: _destTextController,
-                      onSubmitted: (val) {
-                        // if (_source == '') {
-                        //   _srcFocusNode.requestFocus();
-                        //   return;
-                        // }
-                      },
                     ),
                   ),
                 ],
               ),
             ),
-            Container(
-              width: searchBoxWidth * 0.20,
-              height: double.infinity,
-              alignment: Alignment.center,
-              child: Visibility(
-                visible: _source != '' && _destination != '',
-                child: FloatingActionButton(
-                  child: Icon(
-                    Icons.directions,
-                    size: 30,
-                  ),
-                  onPressed: () async {
-                    widget.drawRoutes(
-                        source: _source, destination: _destination);
-                  },
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

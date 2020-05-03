@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as maps;
 import 'package:google_maps_webservice/directions.dart' as direction;
@@ -6,6 +7,52 @@ import 'package:google_maps_webservice/directions.dart' as direction;
 import '../config/api_keys.dart';
 //Utils
 import '../utils/polyline.dart';
+
+
+
+Future<maps.BitmapDescriptor> getCovidIcon() async {
+  return maps.BitmapDescriptor.fromAssetImage(
+    ImageConfiguration(),
+    'lib/assets/images/hotspot_location.png',
+  );
+}
+
+Future<Set<dynamic>> checkProximity(Map<String, dynamic> argumentsMap) async {
+  Map<String, List<maps.LatLng>> listMap = argumentsMap['listMap'];
+  List<maps.LatLng> points = listMap['points'];
+  List<maps.LatLng> hotspotLocations = listMap['hotspots'];
+  maps.BitmapDescriptor covidIcon = argumentsMap['covidIcon'];
+
+  Set<maps.Marker> newMarkers = Set();
+
+  Color color = Colors.blue;
+  for (int p = 0; p < points.length; ++p) {
+    maps.LatLng point = points[p];
+
+    for (int h = 0; h < hotspotLocations.length; ++h) {
+      maps.LatLng loc = hotspotLocations[h];
+      double distance = calculateDistanceKM(
+        point.latitude,
+        point.longitude,
+        loc.latitude,
+        loc.longitude,
+      );
+      if (distance <= 2.0) {
+        color = Colors.deepOrange;
+        // break;
+        newMarkers.add(
+          maps.Marker(
+            markerId: maps.MarkerId(DateTime.now().toString()),
+            icon: covidIcon,
+            position: loc,
+          ),
+        );
+      }
+    }
+  }
+
+  return {color, newMarkers};
+}
 
 class DirectionsProvider extends ChangeNotifier {
   direction.GoogleMapsDirections _directionsApi =
@@ -38,10 +85,10 @@ class DirectionsProvider extends ChangeNotifier {
     return _destCoord;
   }
 
-  
-
   Future<void> findDirections(
       {String src, String dest, List<maps.LatLng> hotspotLocations}) async {
+    clearMarkers();
+    clearRoutes();
     var directionResponse = await _directionsApi.directionsWithAddress(
       src,
       dest,
@@ -51,12 +98,12 @@ class DirectionsProvider extends ChangeNotifier {
     );
 
     Set<maps.Polyline> newRoutes = Set();
+    Set<maps.Marker> newMarkers = Set();
 
     if (directionResponse.isOkay) {
       // print(directionResponse.routes[0].legs[0].distance.text);
-      maps.BitmapDescriptor covidIcon =
-          await maps.BitmapDescriptor.fromAssetImage(
-              ImageConfiguration(), 'lib/assets/images/hotspot_location.png');
+      
+
       List<direction.Route> routes = directionResponse.routes;
 
       List<maps.LatLng> points = [];
@@ -80,28 +127,19 @@ class DirectionsProvider extends ChangeNotifier {
           });
         });
 
-        var color = Colors.blue;
-        points.forEach((point) {
-          hotspotLocations.forEach((loc) {
-            double distance = calculateDistanceKM(
-              point.latitude,
-              point.longitude,
-              loc.latitude,
-              loc.longitude,
-            );
-            if (distance <= 2.0) {
-              color = Colors.deepOrange;
-
-              _markers.add(
-                maps.Marker(
-                  markerId: maps.MarkerId(DateTime.now().toString()),
-                  icon: covidIcon,
-                  position: loc,
-                ),
-              );
-            }
-          });
-        });
+        Set<dynamic> proximityResult = await compute(
+          checkProximity,
+          {
+            'listMap': {
+              'points': points,
+              'hotspots': hotspotLocations,
+            },
+            'covidIcon': await getCovidIcon(),
+            'markers': newMarkers,
+          },
+        );
+        Color color =  proximityResult.elementAt(0) as Color;
+        Set<maps.Marker> markerSet = proximityResult.elementAt(1) as Set<maps.Marker>;
 
         maps.Polyline line = maps.Polyline(
           polylineId: maps.PolylineId(i.toString()),
@@ -110,6 +148,7 @@ class DirectionsProvider extends ChangeNotifier {
           width: color == Colors.deepOrange ? 8 : 10,
         );
         newRoutes.add(line);
+        newMarkers = {...newMarkers, ...markerSet};
         points = [];
         // print('Distance of route: $distance');
       }
@@ -117,6 +156,7 @@ class DirectionsProvider extends ChangeNotifier {
       // print(routes.length);
 
       _routes = newRoutes;
+      _markers = newMarkers;
 
       // print('From ${routes[0].legs[0].startAddress} to ${routes[0].legs[0].endAddress}');
       _srcCoord = maps.LatLng(routes[0].legs[0].startLocation.lat,
@@ -124,11 +164,13 @@ class DirectionsProvider extends ChangeNotifier {
       _destCoord = maps.LatLng(
           routes[0].legs[0].endLocation.lat, routes[0].legs[0].endLocation.lng);
 
+        print('newMarkers: $newMarkers');
       _markers.add(
         maps.Marker(
           markerId: maps.MarkerId(DateTime.now().toString()),
           position: _srcCoord,
-          icon: maps.BitmapDescriptor.defaultMarkerWithHue(maps.BitmapDescriptor.hueBlue),
+          icon: maps.BitmapDescriptor.defaultMarkerWithHue(
+              maps.BitmapDescriptor.hueBlue),
         ),
       );
 
@@ -136,11 +178,13 @@ class DirectionsProvider extends ChangeNotifier {
         maps.Marker(
           markerId: maps.MarkerId(DateTime.now().toString()),
           position: _destCoord,
-          icon: maps.BitmapDescriptor.defaultMarkerWithHue(maps.BitmapDescriptor.hueGreen),
+          icon: maps.BitmapDescriptor.defaultMarkerWithHue(
+              maps.BitmapDescriptor.hueGreen),
         ),
       );
 
       notifyListeners();
+       
     }
   }
 }

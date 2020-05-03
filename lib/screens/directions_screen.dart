@@ -73,7 +73,7 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
     }
 
     // await _mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 10.0));
-    await _mapController
+   await  _mapController
         .animateCamera(CameraUpdate.newLatLngZoom(midPoint, zoom));
     setState(() {
       _loadingDirections = false;
@@ -115,10 +115,10 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
               ),
             ),
           ),
-          if (_loadingDirections == false)
-            DirectionsSearchBox(
-              drawRoutes: _drawRoutes,
-            ),
+          DirectionsSearchBox(
+            drawRoutes: _drawRoutes,
+            loading: _loadingDirections,
+          ),
           Positioned(
             top: 200,
             left: 15,
@@ -147,7 +147,7 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
             ),
           ),
           Positioned(
-            bottom: 10,
+            bottom: 30,
             left: 8,
             child: Consumer<DirectionsProvider>(
               builder: (ctx, directionsApi, _) => Visibility(
