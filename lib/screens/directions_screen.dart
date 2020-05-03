@@ -58,22 +58,26 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
     double distance = calculateDistanceKM(srcCoord.latitude, srcCoord.longitude,
         destCoord.latitude, destCoord.longitude);
     double zoom;
-    if (distance >= 1000) {
-      zoom = 4;
-    } else if (distance >= 500 && distance < 1000) {
+    if (distance >= 2000) {
       zoom = 5;
-    } else if (distance >= 100 && distance < 500) {
+    } else if (distance >= 1000 && distance < 2000) {
       zoom = 6;
-    } else if (distance >= 50 && distance < 100) {
+    } else if (distance >= 500 && distance < 1000) {
+      zoom = 7;
+    } else if (distance >= 250 && distance < 500) {
       zoom = 8;
-    } else if (distance >= 10 && distance < 50) {
+    } else if (distance >= 100 && distance < 250) {
+      zoom = 9;
+    } else if (distance >= 50 && distance < 100) {
       zoom = 10;
+    } else if (distance >= 10 && distance < 50) {
+      zoom = 11;
     } else {
       zoom = 12;
     }
 
     // await _mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 10.0));
-   await  _mapController
+    await _mapController
         .animateCamera(CameraUpdate.newLatLngZoom(midPoint, zoom));
     setState(() {
       _loadingDirections = false;
@@ -120,7 +124,8 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
             loading: _loadingDirections,
           ),
           Positioned(
-            top: 200,
+            top: 50,
+            bottom: 50,
             left: 15,
             right: 15,
             child: Visibility(
@@ -128,19 +133,43 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
               child: Container(
                 alignment: Alignment.center,
                 width: double.infinity,
-                height: deviceSize.height * 0.30,
+                height: deviceSize.height - 150,
                 decoration: SearchBoxDecoration.decoration(),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 40,
                   ),
-                  child: Text(
-                    'Calculating routes. Please wait...',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Theme.of(context).accentColor,
-                      fontSize: 16,
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        width: 60,
+                        height: 60,
+                        child: CircularProgressIndicator(),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        'Determining routes and analysing their safety',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).primaryColor,
+                          fontSize: 16,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        'Routes more than 500km long take a while to be analysed, please wait...',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).accentColor,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

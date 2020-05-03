@@ -164,7 +164,7 @@ class DirectionsProvider extends ChangeNotifier {
       _destCoord = maps.LatLng(
           routes[0].legs[0].endLocation.lat, routes[0].legs[0].endLocation.lng);
 
-        print('newMarkers: $newMarkers');
+        
       _markers.add(
         maps.Marker(
           markerId: maps.MarkerId(DateTime.now().toString()),

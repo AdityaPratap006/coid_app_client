@@ -69,7 +69,7 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
           } else {
             FocusScope.of(context).requestFocus(FocusNode());
 
-            widget.drawRoutes(source: _source, destination: _destination);
+            // widget.drawRoutes(source: _source, destination: _destination);
           }
         } else if (searchType == SearchType.DESTINATION) {
           _destTextController.text = details.result.formattedAddress;
@@ -80,7 +80,7 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
           } else {
             FocusScope.of(context).requestFocus(FocusNode());
 
-            widget.drawRoutes(source: _source, destination: _destination);
+            // widget.drawRoutes(source: _source, destination: _destination);
           }
         }
       });
@@ -123,7 +123,7 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
       child: widget.loading
           ? Container(
               alignment: Alignment.center,
-              child: CircularProgressIndicator(),
+              child: null,
             )
           : Container(
               width: double.infinity,
@@ -204,17 +204,34 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
                     width: searchBoxWidth * 0.20,
                     height: double.infinity,
                     alignment: Alignment.center,
-                    child: Visibility(
-                      visible: _source != '' && _destination != '',
-                      child: FloatingActionButton(
-                        child: Icon(
-                          Icons.directions,
-                          size: 30,
-                        ),
-                        onPressed: () async {
-                          widget.drawRoutes(
-                              source: _source, destination: _destination);
-                        },
+                    child: Opacity(
+                      opacity: _source != '' && _destination != '' ? 1 : 0.5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          FloatingActionButton(
+                            child: Icon(
+                              Icons.directions,
+                              size: 30,
+                            ),
+                            onPressed: () async {
+                              if (_source == '' || _destination == '') {
+                                return;
+                              }
+                              widget.drawRoutes(
+                                source: _source,
+                                destination: _destination,
+                              );
+                            },
+                          ),
+                          Text(
+                            'GO',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Theme.of(context).accentColor,
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
