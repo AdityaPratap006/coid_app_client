@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class SearchBoxDecoration {
-  static BoxDecoration get decoration {
+  static BoxDecoration  decoration({Color color = Colors.white}) {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(9),
-      color: Colors.white,
+      color: color,
       boxShadow: [
         BoxShadow(
           color: Colors.black12,

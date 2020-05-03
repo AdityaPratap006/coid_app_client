@@ -122,7 +122,7 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
       child: Container(
         width: double.infinity,
         height: 120,
-        decoration: SearchBoxDecoration.decoration,
+        decoration: SearchBoxDecoration.decoration(),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,

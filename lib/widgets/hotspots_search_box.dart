@@ -89,7 +89,7 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
       child: Container(
         height: 50,
         width: double.infinity,
-        decoration: SearchBoxDecoration.decoration,
+        decoration: SearchBoxDecoration.decoration(),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[

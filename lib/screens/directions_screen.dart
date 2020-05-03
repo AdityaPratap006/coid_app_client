@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 //Widgets
 import '../widgets/directions_search_box.dart';
+import '../widgets/direction_legends.dart';
 
 //Providers
 import '../providers/directions.dart';
@@ -128,7 +129,7 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
                 alignment: Alignment.center,
                 width: double.infinity,
                 height: deviceSize.height * 0.30,
-                decoration: SearchBoxDecoration.decoration,
+                decoration: SearchBoxDecoration.decoration(),
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 40,
@@ -144,7 +145,17 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
                 ),
               ),
             ),
-          )
+          ),
+          Positioned(
+            bottom: 10,
+            left: 8,
+            child: Consumer<DirectionsProvider>(
+              builder: (ctx, directionsApi, _) => Visibility(
+                visible: directionsApi.currentRoute.isNotEmpty,
+                child: DirectionLegends(),
+              ),
+            ),
+          ),
         ],
       ),
     );
