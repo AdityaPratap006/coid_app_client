@@ -14,6 +14,9 @@ enum SearchType {
 }
 
 class DirectionsSearchBox extends StatefulWidget {
+  final Future<void> Function({String source, String destination}) drawRoutes;
+
+  DirectionsSearchBox({this.drawRoutes});
   @override
   _DirectionsSearchBoxState createState() => _DirectionsSearchBoxState();
 }
@@ -61,46 +64,22 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
           _source = details.result.formattedAddress;
 
           if (_destination == '') {
-            _destFocusNode.requestFocus();
+            // _destFocusNode.requestFocus();
           } else {
-            showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: Text('Get Directions'),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('OK'),
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                    },
-                  ),
-                ],
-              ),
-            );
             FocusScope.of(context).requestFocus(FocusNode());
+
+            widget.drawRoutes(source: _source, destination: _destination);
           }
         } else if (searchType == SearchType.DESTINATION) {
           _destTextController.text = details.result.formattedAddress;
           _destination = details.result.formattedAddress;
 
           if (_source == '') {
-            _srcFocusNode.requestFocus();
+            // _srcFocusNode.requestFocus();
           } else {
-            showDialog(
-              context: context,
-              builder: (ctx) => AlertDialog(
-                title: Text('Get Directions 2'),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text('OK'),
-                    onPressed: () {
-                      Navigator.of(ctx).pop();
-                    },
-                  ),
-                ],
-              ),
-            );
             FocusScope.of(context).requestFocus(FocusNode());
+
+            widget.drawRoutes(source: _source, destination: _destination);
           }
         }
       });
@@ -157,12 +136,13 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
                   Container(
                     width: double.infinity,
                     child: TextField(
-                      onChanged: (val) {
-                        _showPlacesSuggestions(SearchType.SOURCE);
-                      },
+                      // onChanged: (val) {
+                      //   _showPlacesSuggestions(SearchType.SOURCE);
+                      // },
                       onTap: () {
                         _showPlacesSuggestions(SearchType.SOURCE);
                       },
+
                       decoration: InputDecoration(
                         hintText: 'Source...',
                         border: InputBorder.none,
@@ -176,19 +156,19 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
                           ? TextInputAction.next
                           : TextInputAction.go,
                       onSubmitted: (val) {
-                        if (_destination == '') {
-                          _destFocusNode.requestFocus();
-                          return;
-                        }
+                        // if (_destination == '') {
+                        //   _destFocusNode.requestFocus();
+                        //   return;
+                        // }
                       },
                     ),
                   ),
                   Container(
                     width: double.infinity,
                     child: TextField(
-                      onChanged: (val) {
-                        _showPlacesSuggestions(SearchType.DESTINATION);
-                      },
+                      // onChanged: (val) {
+                      //   _showPlacesSuggestions(SearchType.DESTINATION);
+                      // },
                       onTap: () {
                         _showPlacesSuggestions(SearchType.DESTINATION);
                       },
@@ -203,10 +183,10 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
                           : TextInputAction.go,
                       controller: _destTextController,
                       onSubmitted: (val) {
-                        if (_source == '') {
-                          _srcFocusNode.requestFocus();
-                          return;
-                        }
+                        // if (_source == '') {
+                        //   _srcFocusNode.requestFocus();
+                        //   return;
+                        // }
                       },
                     ),
                   ),
@@ -224,7 +204,10 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
                     Icons.directions,
                     size: 30,
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    widget.drawRoutes(
+                        source: _source, destination: _destination);
+                  },
                 ),
               ),
             ),

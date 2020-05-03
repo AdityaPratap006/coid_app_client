@@ -11,13 +11,27 @@ import '../config/api_keys.dart';
 import '../utils/polyline.dart';
 
 class DirectionsProvider extends ChangeNotifier {
-  direction.GoogleMapsDirections directionsApi = direction.GoogleMapsDirections(
+  direction.GoogleMapsDirections _directionsApi =
+      direction.GoogleMapsDirections(
     apiKey: MY_GOOGLE_MAPS_API_KEY,
   );
 
   Set<maps.Polyline> _routes = Set();
-
   Set<maps.Polyline> get currentRoute => _routes;
+
+  Set<maps.Marker> _markers = Set();
+  Set<maps.Marker> get markers => _markers;
+
+  maps.LatLng _srcCoord;
+  maps.LatLng _destCoord;
+
+  maps.LatLng get sourceCoord {
+    return _srcCoord;
+  }
+
+  maps.LatLng get destinationCoord {
+    return _destCoord;
+  }
 
   double _calculateDistanceKM(lat1, lon1, lat2, lon2) {
     var p = 0.017453292519943295;
@@ -30,7 +44,7 @@ class DirectionsProvider extends ChangeNotifier {
 
   Future<void> findDirections(
       {String src, String dest, List<maps.LatLng> hotspotLocations}) async {
-    var directionResponse = await directionsApi.directionsWithAddress(
+    var directionResponse = await _directionsApi.directionsWithAddress(
       src,
       dest,
       travelMode: direction.TravelMode.driving,
@@ -42,9 +56,11 @@ class DirectionsProvider extends ChangeNotifier {
 
     if (directionResponse.isOkay) {
       // print(directionResponse.routes[0].legs[0].distance.text);
+      maps.BitmapDescriptor covidIcon =
+          await maps.BitmapDescriptor.fromAssetImage(
+              ImageConfiguration(), 'lib/assets/images/hotspot_location.png');
       List<direction.Route> routes = directionResponse.routes;
 
-      double distance = 0.0;
       List<maps.LatLng> points = [];
 
       routes.forEach((route) {});
@@ -54,12 +70,10 @@ class DirectionsProvider extends ChangeNotifier {
         List<direction.Leg> legs = route.legs;
 
         // print('${json.encode(route)}');
-        distance = 0.0;
+
         legs.forEach((leg) {
           // print('${leg.startAddress} to ${leg.endAddress}, ');
           leg.steps.forEach((step) {
-            distance += step.distance.value;
-
             List decodedPoints = decodePoly(step.polyline.points);
 
             List<maps.LatLng> latLngList = convertToLatLng(decodedPoints);
@@ -77,8 +91,16 @@ class DirectionsProvider extends ChangeNotifier {
               loc.latitude,
               loc.longitude,
             );
-            if (distance <= 4.0) {
-              color = Colors.red;
+            if (distance <= 2.0) {
+              color = Colors.deepOrange;
+
+              _markers.add(
+                maps.Marker(
+                  markerId: maps.MarkerId(DateTime.now().toString()),
+                  icon: covidIcon,
+                  position: loc,
+                ),
+              );
             }
           });
         });
@@ -87,7 +109,7 @@ class DirectionsProvider extends ChangeNotifier {
           polylineId: maps.PolylineId(i.toString()),
           points: points,
           color: color,
-          width: 10,
+          width: color == Colors.deepOrange ? 8 : 10,
         );
         newRoutes.add(line);
         points = [];
@@ -98,21 +120,28 @@ class DirectionsProvider extends ChangeNotifier {
 
       _routes = newRoutes;
 
-      // for (int index = 0; index < _routes.length; ++index) {
-      //   var polyline = _routes.elementAt(index);
-      //   if (index == 0) {
-      //     _routes.remove(polyline);
-      //     polyline = maps.Polyline(
-      //       polylineId: maps.PolylineId(DateTime.now().toString()),
-      //       color: Colors.blue,
-      //       width: 12,
-      //       points: polyline.points,
+      // print('From ${routes[0].legs[0].startAddress} to ${routes[0].legs[0].endAddress}');
+      _srcCoord = maps.LatLng(routes[0].legs[0].startLocation.lat,
+          routes[0].legs[0].startLocation.lng);
+      _destCoord = maps.LatLng(
+          routes[0].legs[0].endLocation.lat, routes[0].legs[0].endLocation.lng);
 
-      //     );
+      _markers.add(
+        maps.Marker(
+          markerId: maps.MarkerId(DateTime.now().toString()),
+          position: _srcCoord,
+          icon: maps.BitmapDescriptor.defaultMarkerWithHue(maps.BitmapDescriptor.hueBlue),
+        ),
+      );
 
-      //     _routes.add(polyline);
-      //   }
-      // }
+      _markers.add(
+        maps.Marker(
+          markerId: maps.MarkerId(DateTime.now().toString()),
+          position: _destCoord,
+          icon: maps.BitmapDescriptor.defaultMarkerWithHue(maps.BitmapDescriptor.hueGreen),
+        ),
+      );
+
       notifyListeners();
     }
   }
