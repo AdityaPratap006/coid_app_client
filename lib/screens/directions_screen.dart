@@ -11,6 +11,7 @@ import '../providers/hotspot_locations.dart';
 
 //Utils
 import '../utils/search_box_decoration.dart';
+import '../utils/polyline.dart';
 
 class DirectionsScreen extends StatefulWidget {
   @override
@@ -32,6 +33,9 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
         Provider.of<HotspotLocations>(context, listen: false).locations;
     var directionsApi = Provider.of<DirectionsProvider>(context, listen: false);
 
+    directionsApi.clearMarkers();
+    directionsApi.clearRoutes();
+
     setState(() {
       _loadingDirections = true;
     });
@@ -44,39 +48,76 @@ class _DirectionsScreenState extends State<DirectionsScreen> {
       }).toList(),
     );
 
+    LatLng srcCoord = directionsApi.sourceCoord;
+    LatLng destCoord = directionsApi.destinationCoord;
+    LatLng midPoint = LatLng((srcCoord.latitude + destCoord.latitude) / 2,
+        (srcCoord.longitude + destCoord.longitude) / 2);
+    // LatLngBounds bounds = LatLngBounds(northeast: srcCoord, southwest: destCoord);
+
+    double distance = calculateDistanceKM(srcCoord.latitude, srcCoord.longitude,
+        destCoord.latitude, destCoord.longitude);
+    double zoom;
+    if (distance >= 1000) {
+      zoom = 4;
+    } else if (distance >= 500 && distance < 1000) {
+      zoom = 5;
+    } else if (distance >= 100 && distance < 500) {
+      zoom = 6;
+    } else if (distance >= 50 && distance < 100) {
+      zoom = 8;
+    } else if (distance >= 10 && distance < 50) {
+      zoom = 10;
+    } else {
+      zoom = 12;
+    }
+
+    // await _mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 10.0));
+    await _mapController
+        .animateCamera(CameraUpdate.newLatLngZoom(midPoint, zoom));
     setState(() {
       _loadingDirections = false;
     });
   }
 
   @override
+  void initState() {
+    var directionsApi = Provider.of<DirectionsProvider>(context, listen: false);
+    directionsApi.clearMarkers();
+    directionsApi.clearRoutes();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
-    final directionsApi = Provider.of<DirectionsProvider>(
-      context,
-      listen: false,
-    );
+    // final directionsApi = Provider.of<DirectionsProvider>(
+    //   context,
+    //   listen: false,
+    // );
     return Scaffold(
       body: Stack(
         children: <Widget>[
           Container(
             width: deviceSize.width,
             height: deviceSize.height,
-            child: GoogleMap(
-              mapType: MapType.normal,
-              buildingsEnabled: true,
-              initialCameraPosition: CameraPosition(
-                target: LatLng(23, 79),
-                zoom: 5,
+            child: Consumer<DirectionsProvider>(
+              builder: (ctx, directionsApi, _) => GoogleMap(
+                mapType: MapType.normal,
+                buildingsEnabled: true,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(23, 79),
+                  zoom: 5,
+                ),
+                onMapCreated: _onMapCreated,
+                polylines: directionsApi.currentRoute,
+                markers: directionsApi.markers,
               ),
-              onMapCreated: _onMapCreated,
-              polylines: directionsApi.currentRoute,
-              markers: directionsApi.markers,
             ),
           ),
-          DirectionsSearchBox(
-            drawRoutes: _drawRoutes,
-          ),
+          if (_loadingDirections == false)
+            DirectionsSearchBox(
+              drawRoutes: _drawRoutes,
+            ),
           Positioned(
             top: 200,
             left: 15,

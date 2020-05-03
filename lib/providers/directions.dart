@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as maps;
 import 'package:google_maps_webservice/directions.dart' as direction;
@@ -22,6 +19,14 @@ class DirectionsProvider extends ChangeNotifier {
   Set<maps.Marker> _markers = Set();
   Set<maps.Marker> get markers => _markers;
 
+  void clearRoutes() {
+    _routes.clear();
+  }
+
+  void clearMarkers() {
+    _markers.clear();
+  }
+
   maps.LatLng _srcCoord;
   maps.LatLng _destCoord;
 
@@ -33,14 +38,7 @@ class DirectionsProvider extends ChangeNotifier {
     return _destCoord;
   }
 
-  double _calculateDistanceKM(lat1, lon1, lat2, lon2) {
-    var p = 0.017453292519943295;
-    var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
-    return 12742 * asin(sqrt(a));
-  }
+  
 
   Future<void> findDirections(
       {String src, String dest, List<maps.LatLng> hotspotLocations}) async {
@@ -85,7 +83,7 @@ class DirectionsProvider extends ChangeNotifier {
         var color = Colors.blue;
         points.forEach((point) {
           hotspotLocations.forEach((loc) {
-            double distance = _calculateDistanceKM(
+            double distance = calculateDistanceKM(
               point.latitude,
               point.longitude,
               loc.latitude,
