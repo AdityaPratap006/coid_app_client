@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     UserProfileScreen(),
   ];
 
-  int _selectedScreenIndex = 1;
+  int _selectedScreenIndex = 0;
   bool _loadingCovidLocations = false;
 
   void _selectScreen(int index) {
@@ -80,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
         : Scaffold(
             body: _screens[_selectedScreenIndex],
             bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
               elevation: 12,
               onTap: _selectScreen,
               backgroundColor: Theme.of(context).primaryColor,
@@ -91,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   backgroundColor: Theme.of(context).primaryColor,
                   icon: Icon(Icons.location_on),
                   title: Text(
-                    'Covid Radar',
+                    'Covid',
                     style: TextStyle(
                       fontSize: 14,
                     ),
@@ -101,7 +102,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   backgroundColor: Theme.of(context).primaryColor,
                   icon: Icon(Icons.directions_car),
                   title: Text(
-                    'Routes',
+                    'Travel',
                     style: TextStyle(
                       fontSize: 14,
                     ),
