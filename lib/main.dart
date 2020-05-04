@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import './providers/auth.dart';
 import './providers/hotspot_locations.dart';
 import './providers/directions.dart';
+import './providers/insights.dart';
 
 //Screens
 import './screens/home_screen.dart';
@@ -26,7 +27,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider.value(
           value: DirectionsProvider(),
-        )
+        ),
+        ChangeNotifierProvider.value(
+          value: InsightsProvider(),
+        ),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(

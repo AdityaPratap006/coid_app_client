@@ -7,7 +7,7 @@ import '../providers/hotspot_locations.dart';
 import './hotspots_screen.dart';
 import './directions_screen.dart';
 import './user_profile_screen.dart';
-
+import './insights_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _screens = [
     HotspotsScreen(),
     DirectionsScreen(),
-    UserProfileScreen(),
+    InsightsScreen(),
     UserProfileScreen(),
   ];
 
