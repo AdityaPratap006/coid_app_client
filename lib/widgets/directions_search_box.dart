@@ -154,6 +154,11 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
                               border: InputBorder.none,
                               contentPadding: EdgeInsets.only(
                                 left: 15.0,
+                                top: 15.0,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.location_on,
+                                color: Colors.blue,
                               ),
                             ),
                             focusNode: _srcFocusNode,
@@ -181,8 +186,14 @@ class _DirectionsSearchBoxState extends State<DirectionsSearchBox> {
                             decoration: InputDecoration(
                               hintText: 'Destination...',
                               border: InputBorder.none,
-                              contentPadding:
-                                  EdgeInsets.only(left: 15.0, top: 5.0),
+                              contentPadding: EdgeInsets.only(
+                                left: 15.0,
+                                top: 15.0,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.location_on,
+                                color: Colors.green,
+                              ),
                             ),
                             focusNode: _destFocusNode,
                             textInputAction: _source == ''
