@@ -8,8 +8,10 @@ import '../models/stats.dart';
 
 class InsightsProvider extends ChangeNotifier {
   List<StateInfo> _stateWiseData;
+  StateInfo _totalData;
 
   List<StateInfo> get stateWiseData => _stateWiseData;
+  StateInfo get totalData => _totalData;
 
   Future<void> fetchAndSetData() async {
     try {
@@ -21,24 +23,28 @@ class InsightsProvider extends ChangeNotifier {
 
       data['statewise'].forEach((state) {
         stateData.add(StateInfo(
-          active: double.parse(state['active']),
-          confirmed: double.parse(state['confirmed']),
-          deaths: double.parse(state['deaths']),
-          deltaconfirmed: double.parse(state['deltaconfirmed']),
-          deltadeaths: double.parse(state['deltadeaths']),
-          deltarecovered: double.parse(state['deltarecovered']),
-          recovered: double.parse(state['recovered']),
-          state: (state['state'] as String).toLowerCase(),
+          active: double.parse(state['active'] as String),
+          confirmed: double.parse(state['confirmed'] as String),
+          deaths: double.parse(state['deaths'] as String),
+          deltaconfirmed: double.parse(state['deltaconfirmed'] as String),
+          deltadeaths: double.parse(state['deltadeaths'] as String),
+          deltarecovered: double.parse(state['deltarecovered'] as String),
+          recovered: double.parse(state['recovered'] as String),
+          state: state['state'] as String,
         ));
       });
 
-      _stateWiseData = [...stateData];
-      print(stateData);
-      notifyListeners();
+      _stateWiseData = stateData.where((data) {
+        return data.state.toLowerCase() != 'total';
+      }).toList();
 
+      _totalData = stateData.firstWhere((data) {
+        return data.state.toLowerCase() == 'total';
+      });
+
+      notifyListeners();
     } catch (error) {
-       
-       throw(error);
+      throw (error);
     }
   }
 }
