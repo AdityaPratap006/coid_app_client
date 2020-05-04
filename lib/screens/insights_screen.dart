@@ -61,19 +61,19 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     SizedBox(
                       height: 40,
                     ),
-                    Text(
-                      'Swipe Left/Right to view complete info',
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
+                    // Text(
+                    //   'Swipe Left/Right to view complete info',
+                    //   textAlign: TextAlign.left,
+                    //   style: TextStyle(
+                    //     color: Colors.grey.shade600,
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 20,
+                    // ),
                     Container(
                       padding: EdgeInsets.all(8.0),
-                      height: deviceSize.height * 0.36,
+                      height: deviceSize.height * 0.45,
                       decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(9.0),

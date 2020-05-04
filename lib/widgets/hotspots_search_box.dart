@@ -94,7 +94,7 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Container(
-              width: searchBoxWidth * 0.70,
+              width: searchBoxWidth * 0.80,
               alignment: Alignment.center,
               child: TextField(
                 onChanged: (val) {
@@ -113,7 +113,7 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
               ),
             ),
             Container(
-              width: searchBoxWidth * 0.10,
+              width: searchBoxWidth * 0.20,
               height: double.infinity,
               alignment: Alignment.center,
               child: IconButton(
@@ -122,12 +122,7 @@ class _HotspotsSearchBoxState extends State<HotspotsSearchBox> {
                 iconSize: 30.0,
               ),
             ),
-            Container(
-              width: searchBoxWidth * 0.20,
-              height: double.infinity,
-              alignment: Alignment.center,
-              child: ProfileButton(),
-            ),
+        
           ],
         ),
       ),

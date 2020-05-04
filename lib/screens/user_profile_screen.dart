@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 //Providers
 import '../providers/auth.dart';
 
+//Utils
+import '../utils/search_box_decoration.dart';
+
 class UserProfileScreen extends StatefulWidget {
   @override
   _UserProfileScreenState createState() => _UserProfileScreenState();
@@ -32,47 +35,92 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<Auth>(context, listen: false).user;
+    final user = Provider.of<Auth>(context).user;
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Profile'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text('${user != null ? user.displayName : ''}'),
-            _loading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : FlatButton(
-                    color: Theme.of(context).primaryColor,
-                    child: Text('LOGOUT'),
-                    onPressed: () async {
-                      Navigator.of(context).pop();
-                      setState(() {
-                        _loading = true;
-                      });
+      body: user == null
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Center(
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                        vertical: 20.0,
+                        horizontal: 10.0,
+                      ),
+                      padding: EdgeInsets.all(10.0),
+                      height: 350,
+                      width: double.infinity,
+                      decoration: SearchBoxDecoration.decoration(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: <Widget>[
+                          CircleAvatar(
+                            radius: 100,
+                            backgroundImage: NetworkImage(user.photoUrl),
+                          ),
+                          Text(
+                            '${user.displayName}',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          _loading
+                              ? Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : FlatButton(
+                                  color: Theme.of(context).primaryColor,
+                                  child: Text('LOGOUT'),
+                                  onPressed: () async {
+                                    setState(() {
+                                      _loading = true;
+                                    });
 
-                      try {
-                        await Provider.of<Auth>(context, listen: false)
-                            .logout();
-                      } catch (error) {
-                        var errorMessage = error.toString();
+                                    try {
+                                      await Provider.of<Auth>(context,
+                                              listen: false)
+                                          .logout();
+                                    } catch (error) {
+                                      var errorMessage = error.toString();
 
-                        _showErrorDialog(errorMessage);
-                      }
+                                      _showErrorDialog(errorMessage);
+                                    }
 
-                      setState(() {
-                        _loading = false;
-                      });
-                    },
-                  ),
-          ],
-        ),
-      ),
+                                    setState(() {
+                                      _loading = false;
+                                    });
+                                  },
+                                ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30.0,
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                        vertical: 20.0,
+                        horizontal: 10.0,
+                      ),
+                      padding: EdgeInsets.all(10.0),
+                      height: 200,
+                      width: double.infinity,
+                      decoration: SearchBoxDecoration.decoration(),
+
+                    )
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }

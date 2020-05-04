@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:geolocator/geolocator.dart';
 
 //Providers
 import '../providers/hotspot_locations.dart';
@@ -34,6 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+
     setState(() {
       _loadingCovidLocations = true;
     });
