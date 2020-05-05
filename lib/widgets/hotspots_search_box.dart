@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_webservice/places.dart';
 
-//Widgets
-import '../widgets/profile_button.dart';
-
 //Config
 import '../config/api_keys.dart';
 

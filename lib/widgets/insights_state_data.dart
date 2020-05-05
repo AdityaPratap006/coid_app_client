@@ -1,58 +1,185 @@
 import 'package:flutter/material.dart';
 
+//Model
+import '../models/stats.dart';
+
+//Utils
+import '../utils/search_box_decoration.dart';
+
 class StateData extends StatelessWidget {
-  final double count;
-  final double delta;
-  final Color color;
+  final StateInfo data;
 
   StateData({
-    @required this.color,
-    @required this.count,
-    @required this.delta,
+    @required this.data,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 80,
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(9),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              '${count.floor()}',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: color,
-                fontSize: 16,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                if (delta > 0.0)
-                  Icon(
-                    Icons.arrow_drop_up,
-                    color: color,
-                  ),
-                Text(
-                  '${delta > 0.0 ? delta.floor() : ''}',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: color,
-                    fontSize: 14,
-                  ),
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Material(
+        elevation: 14.0,
+        color: Colors.white,
+        shadowColor: Color(0x802196f3),
+        borderRadius: BorderRadius.circular(10.0),
+        child: Container(
+          height: 220,
+          width: 200,
+          padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+          child: Column(
+            children: <Widget>[
+              Text(
+                '${data.state}',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).accentColor,
                 ),
-              ],
-            ),
-          ],
+              ),
+              Container(
+                height: 160,
+                width: 180,
+                child: GridView.count(
+                  physics: NeverScrollableScrollPhysics(),
+                  crossAxisCount: 2,
+                  padding: const EdgeInsets.all(5.0),
+                  crossAxisSpacing: 2.0,
+                  mainAxisSpacing: 2.0,
+                  children: <Widget>[
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Confirmed',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '${data.confirmed.toInt()}',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            data.deltaconfirmed <= 0
+                                ? ''
+                                : '[+${data.deltaconfirmed.toInt()}]',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Active',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '${data.active.toInt()}',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            '',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Recovered',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '${data.recovered.toInt()}',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            data.deltarecovered <= 0
+                                ? ''
+                                : '[+${data.deltarecovered.toInt()}]',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            'Deceased',
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            '${data.deaths.toInt()}',
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: 14,
+                            ),
+                          ),
+                          Text(
+                            data.deltadeaths <= 0
+                                ? ''
+                                : '[+${data.deltadeaths.toInt()}]',
+                            style: TextStyle(
+                              color: Colors.grey.shade700,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
