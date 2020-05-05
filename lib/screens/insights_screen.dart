@@ -14,11 +14,22 @@ class InsightsScreen extends StatefulWidget {
 }
 
 class _InsightsScreenState extends State<InsightsScreen> {
+  bool _loading = false;
+
   @override
   void initState() {
     super.initState();
 
-    Provider.of<InsightsProvider>(context, listen: false).fetchAndSetData();
+    setState(() {
+      _loading = true;
+    });
+    Provider.of<InsightsProvider>(context, listen: false)
+        .fetchAndSetData()
+        .then((_) {
+      setState(() {
+        _loading = false;
+      });
+    });
   }
 
   @override
@@ -30,7 +41,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
       appBar: AppBar(
         title: Text('Insights'),
       ),
-      body: stateWiseData == null
+      body: _loading
           ? Container(
               width: deviceSize.width,
               height: deviceSize.height,
@@ -41,14 +52,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
           : SingleChildScrollView(
               child: Container(
                 width: deviceSize.width,
-                height: deviceSize.height,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     SizedBox(
                       height: 20,
                     ),
-                     Padding(
+                    Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
                         'Total (India)',
@@ -81,20 +91,20 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     ),
                     Container(
                       height: 300.0,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            ...stateWiseData
-                                .map((data) => StateData(
-                                      data: data,
-                                    ))
-                                .toList(),
-                          ],
+                      alignment: Alignment.topCenter,
+                      child: ListView.builder(
+                        padding: EdgeInsets.only(
+                          bottom: 25.0,
                         ),
+                        scrollDirection: Axis.horizontal,
+                        itemBuilder: (ctx, i) => StateData(
+                          data: stateWiseData[i],
+                        ),
+                        itemCount: stateWiseData.length,
                       ),
+                    ),
+                    SizedBox(
+                      height: 40,
                     ),
                   ],
                 ),

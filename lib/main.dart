@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
             canvasColor: Colors.white,
             primaryColor: Color(0xFF36d1dc),
             accentColor: Color(0xFF36096D),
-            textTheme: GoogleFonts.robotoMonoTextTheme(
+            textTheme: GoogleFonts.latoTextTheme(
               Theme.of(context).textTheme,
             ),
           ),

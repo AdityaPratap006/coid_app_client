@@ -63,7 +63,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
                           CircleAvatar(
-                            radius: 100,
+                            radius: 70,
                             backgroundImage:
                                 user.photoUrl != null && user.photoUrl != ''
                                     ? NetworkImage(user.photoUrl)
