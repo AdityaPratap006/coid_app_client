@@ -69,11 +69,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TotalData(
-                        info: totalInfo,
-                      ),
+                    TotalData(
+                      info: totalInfo,
                     ),
                     SizedBox(
                       height: 40,
@@ -90,11 +87,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       ),
                     ),
                     Container(
-                      height: 300.0,
+                      height: 260.0,
                       alignment: Alignment.topCenter,
                       child: ListView.builder(
                         padding: EdgeInsets.only(
-                          bottom: 25.0,
+                          bottom: 10.0,
                         ),
                         scrollDirection: Axis.horizontal,
                         itemBuilder: (ctx, i) => StateData(

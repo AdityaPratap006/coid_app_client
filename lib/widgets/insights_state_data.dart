@@ -23,7 +23,6 @@ class StateData extends StatelessWidget {
         shadowColor: Color(0x802196f3),
         borderRadius: BorderRadius.circular(10.0),
         child: Container(
-          height: 220,
           width: 220,
           padding: EdgeInsets.symmetric(vertical: 8, horizontal: 10),
           child: Column(
@@ -35,15 +34,13 @@ class StateData extends StatelessWidget {
                   color: Theme.of(context).accentColor,
                 ),
               ),
-              Container(
-                width: 200,
-                height: 180,
+              Expanded(
                 child: GridView.count(
                   physics: NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
-                  padding: const EdgeInsets.all(5.0),
-                  crossAxisSpacing: 2.0,
-                  mainAxisSpacing: 2.0,
+                  padding: const EdgeInsets.all(0.0),
+                  crossAxisSpacing: 0.0,
+                  mainAxisSpacing: 0.0,
                   children: <Widget>[
                     Container(
                       child: Column(
