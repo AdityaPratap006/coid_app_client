@@ -1,4 +1,4 @@
-package com.example.covid_app_client
+package com.netlify.adityapratap
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

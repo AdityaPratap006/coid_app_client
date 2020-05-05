@@ -39,4 +39,5 @@ lib/generated_plugin_registrant.dart
 # Files containing secret keys
 android/app/google-services.json
 android/app/src/main/res/values/api_keys.xml
+android/key.properties
 lib/config/api_keys.dart
