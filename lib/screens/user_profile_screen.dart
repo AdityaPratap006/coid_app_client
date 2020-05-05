@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -64,10 +66,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         children: <Widget>[
                           CircleAvatar(
                             radius: 70,
-                            backgroundImage:
-                                user.photoUrl != null && user.photoUrl != ''
-                                    ? NetworkImage(user.photoUrl)
-                                    : AssetImage('lib/assets/images/profile.png'),
+                            backgroundImage: user.photoUrl != null &&
+                                    user.photoUrl != ''
+                                ? NetworkImage(user.photoUrl)
+                                : AssetImage('lib/assets/images/profile.png'),
                           ),
                           Text(
                             '${user.displayName}',
@@ -83,7 +85,18 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 )
                               : FlatButton(
                                   color: Theme.of(context).primaryColor,
-                                  child: Text('LOGOUT'),
+                                  padding: EdgeInsets.all(20.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(50.0),
+                                  ),
+                                  child: Text(
+                                    'LOGOUT',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18.0,
+                                    ),
+                                  ),
                                   onPressed: () async {
                                     setState(() {
                                       _loading = true;
@@ -108,7 +121,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       ),
                     ),
                     SizedBox(
-                      height: 30.0,
+                      height: 20.0,
                     ),
                     Container(
                       margin: EdgeInsets.symmetric(
@@ -116,9 +129,40 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         horizontal: 10.0,
                       ),
                       padding: EdgeInsets.all(10.0),
-                      height: 200,
+                      height: 150,
                       width: double.infinity,
                       decoration: SearchBoxDecoration.decoration(),
+                      child: Column(
+                        children: <Widget>[
+                          Text(
+                            'About App',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20.0,
+                          ),
+                          Text(
+                            'Data Source',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 10.0,
+                          ),
+                          Text(
+                            'Covid19-India API',
+                            style: TextStyle(
+                              fontSize: 20,
+                              backgroundColor: Colors.grey.shade300,
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),
