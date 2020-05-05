@@ -64,12 +64,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         children: <Widget>[
                           CircleAvatar(
                             radius: 100,
-                            backgroundImage: NetworkImage(user.photoUrl),
+                            backgroundImage:
+                                user.photoUrl != null && user.photoUrl != ''
+                                    ? NetworkImage(user.photoUrl)
+                                    : AssetImage('lib/assets/images/profile.png'),
                           ),
                           Text(
                             '${user.displayName}',
                             style: TextStyle(
                               fontSize: 22,
+                              color: Theme.of(context).accentColor,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -115,7 +119,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       height: 200,
                       width: double.infinity,
                       decoration: SearchBoxDecoration.decoration(),
-
                     )
                   ],
                 ),

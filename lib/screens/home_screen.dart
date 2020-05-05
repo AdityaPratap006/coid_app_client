@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(
                     'Covid',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -108,17 +108,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(
                     'Travel',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                   ),
                 ),
                 BottomNavigationBarItem(
                   backgroundColor: Theme.of(context).primaryColor,
-                  icon: Icon(Icons.show_chart),
+                  icon: Icon(Icons.bubble_chart),
                   title: Text(
                     'Insights',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                   ),
                 ),
@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: Text(
                     'Profile',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                     ),
                   ),
                 ),

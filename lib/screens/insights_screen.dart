@@ -80,10 +80,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       ),
                     ),
                     Container(
-                      height: 280.0,
+                      height: 300.0,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
                             ...stateWiseData
