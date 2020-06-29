@@ -2,6 +2,12 @@
 
 A new Flutter project.
 
+## Youtube Demo
+<iframe width="560" height="315" src="https://www.youtube.com/embed/duEfP_mRZTU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+### Server side code:
+Find the server side code [here](https://github.com/AdityaPratap006/covid_app_server)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
