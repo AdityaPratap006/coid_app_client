@@ -3,7 +3,7 @@
 A new Flutter project.
 
 ## Youtube Demo
-<iframe width="560" height="315" src="https://www.youtube.com/embed/duEfP_mRZTU" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/duEfP_mRZTU/0.jpg)](http://www.youtube.com/watch?v=duEfP_mRZTU "Covid Radar: A Covid tracking app built with Flutter and NodeJs")
 
 ### Server side code:
 Find the server side code [here](https://github.com/AdityaPratap006/covid_app_server)
